@@ -1,0 +1,27 @@
+Fonctionnalités nécessaires :
+- 2 parties (une prestation vitrerie, une partie presta travaux exceptionnels)
+- Saisie des intervenants avec suggestion de résultats (nombre d'intervenants variable) (Obligatoire)
+- Liste déroulante avec les prestations génerales dont une prestation "Autre" avec saisie libre (Obligatoire)
+- Saisie des heures de début et de fin (À mettre que dans le bon envoyé au bureau) (Optionnel si besoin de précision)
+- Partie administration permettant l'ajout de nouveau client, nouvel employé, nouveau type de presta (avec possibilité de les supprimer)
+- Champ dessinable pour les signatures (Optionnel) (Case à cocher si le client ne souhaite pas signé)
+- Possibilité d'ajouter des commentaires (Optionnel)
+- Avant confirmation ajouter checkbox pour ne pas envoyer le bon au client (Optionnel)
+- Télecharger le bon en même temps de confirmer l'envoi (Obligatoire)
+
+Stockage en base de données:
+- Client
+    - Nom de l'entreprise
+    - Adresse
+    - Mail
+
+- Employé
+    - Nom
+    - Prénom
+    - Score (référencement dans la liste de résultat de recherche)
+
+- Prestations générales
+    - Nom de la prestation
+
+- Déploiement : docker
+- Hébergement : à voir
