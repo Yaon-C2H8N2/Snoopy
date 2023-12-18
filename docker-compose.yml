@@ -1,0 +1,32 @@
+services:
+  api:
+    build: api
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - db
+      - pdfconverter
+
+  pdfconverter:
+    image: gotenberg/gotenberg:7
+    networks:
+      - backend
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
