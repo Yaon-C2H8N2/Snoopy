@@ -1,15 +1,23 @@
-FROM debian:stable-slim
+FROM debian:stable-slim as builder
 LABEL authors="yaon"
+
+WORKDIR /app
+COPY . /app
 
 RUN apt update && apt install -y \
     openjdk-17-jdk\
     maven
 
-COPY . /app
+RUN mvn clean package -P prod -DskipTests
+
+
+
+FROM debian:stable-slim as runner
 WORKDIR /app
-
-RUN mvn clean
-
+COPY --from=builder /app /app
+RUN apt update && apt install -y \
+    openjdk-17-jre\
+    maven
 EXPOSE 8080
 
-CMD ["mvn", "spring-boot:run", "-P", "prod"]
+CMD ["java", "-jar", "target/api-0.0.1-SNAPSHOT.jar"]
