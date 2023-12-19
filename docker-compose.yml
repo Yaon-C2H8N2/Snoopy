@@ -15,6 +15,8 @@ services:
 
   pdfconverter:
     image: gotenberg/gotenberg:7
+    ports:
+      - "3000:3000"
     networks:
       - backend
 

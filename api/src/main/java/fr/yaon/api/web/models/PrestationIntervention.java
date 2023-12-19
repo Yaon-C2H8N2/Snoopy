@@ -10,7 +10,7 @@ public class PrestationIntervention {
     private int idPrestationIntervention;
     private int idPrestation;
     private int idClient;
-    private Date dateIntervention;
+    private Date datePrestation;
     private Time heureDebut;
     private Time heureFin;
     private boolean interieur;
@@ -41,12 +41,12 @@ public class PrestationIntervention {
         this.idClient = idClient;
     }
 
-    public Date getDateIntervention() {
-        return dateIntervention;
+    public Date getDatePrestation() {
+        return datePrestation;
     }
 
-    public void setDateIntervention(Date dateIntervention) {
-        this.dateIntervention = dateIntervention;
+    public void setDatePrestation(Date datePrestation) {
+        this.datePrestation = datePrestation;
     }
 
     public Time getHeureDebut() {
