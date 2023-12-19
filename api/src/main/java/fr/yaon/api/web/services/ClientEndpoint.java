@@ -2,9 +2,11 @@ package fr.yaon.api.web.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.yaon.api.repositories.ClientRepository;
+import fr.yaon.api.web.models.Client;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/client")
 public class ClientEndpoint {
 
     private final ClientRepository clientRepository;
@@ -16,7 +18,7 @@ public class ClientEndpoint {
         this.objectMapper = objectMapper;
     }
 
-    @GetMapping("/client")
+    @GetMapping("")
     public String getClients() {
         try{
             return this.objectMapper.writeValueAsString(this.clientRepository.findAll());
@@ -25,7 +27,7 @@ public class ClientEndpoint {
         }
     }
 
-    @PostMapping("/client/{idClient}")
+    @PostMapping("/{idClient}")
     public String getClient(@PathVariable int idClient) {
         try{
             return this.objectMapper.writeValueAsString(this.clientRepository.findByIdClient(idClient));
@@ -34,10 +36,10 @@ public class ClientEndpoint {
         }
     }
 
-    @PutMapping("/client/add")
-    public String addClient(@RequestBody String body) {
+    @PutMapping("/add")
+    public String addClient(@RequestBody Client client) {
         try{
-            return this.objectMapper.writeValueAsString(this.clientRepository.save(this.objectMapper.readValue(body, fr.yaon.api.web.models.Client.class)));
+            return this.objectMapper.writeValueAsString(this.clientRepository.save(client));
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }

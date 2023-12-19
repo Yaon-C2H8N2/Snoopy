@@ -9,6 +9,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +25,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @RestController
+@RequestMapping("/edition")
 public class EditionEndpoint {
     public EditionEndpoint() {
     }
 
-    @GetMapping("/edition")
+    @GetMapping("")
     public byte[] getEditions(HttpServletResponse response) {
         try {
             FileInputStream file = new FileInputStream("src/main/resources/edition/template/edition_bon.xlsx");
