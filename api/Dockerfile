@@ -12,4 +12,4 @@ RUN mvn clean
 
 EXPOSE 8080
 
-CMD ["mvn", "spring-boot:run"]
+CMD ["mvn", "spring-boot:run", "-P", "prod"]
