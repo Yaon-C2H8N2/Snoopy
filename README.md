@@ -20,3 +20,7 @@ docker-compose up
 ### Usage
 
 Open your browser and go to `http://localhost:8080`
+
+### Credits
+
+- [Gotenberg](https://github.com/gotenberg/gotenberg) used to convert excel generated invoices to pdf.
