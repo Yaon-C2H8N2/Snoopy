@@ -29,8 +29,8 @@ CREATE TABLE prestation
 CREATE TABLE prestation_intervention
 (
     id_prestation_intervention SERIAL PRIMARY KEY,
-    id_prestation              INTEGER REFERENCES prestation (id_prestation),
-    id_client                  INTEGER REFERENCES client (id_client),
+    id_prestation              INTEGER REFERENCES prestation (id_prestation) NOT NULL,
+    id_client                  INTEGER REFERENCES client (id_client) NOT NULL,
     date_prestation            DATE,
     heure_debut                TIME,
     heure_fin                  TIME,

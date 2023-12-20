@@ -1,13 +1,16 @@
 package fr.yaon.api.report;
 
+import fr.yaon.api.repositories.ClientRepository;
 import fr.yaon.api.repositories.EmployeRepository;
 import fr.yaon.api.repositories.PrestationInterventionRepository;
+import fr.yaon.api.web.models.Client;
 import fr.yaon.api.web.models.Employe;
 import fr.yaon.api.web.models.PrestationIntervention;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 import java.io.ByteArrayOutputStream;
@@ -17,17 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ExcelReporter {
+    @Autowired
     private PrestationInterventionRepository prestationInterventionRepository;
 
+    @Autowired
     private EmployeRepository employeRepository;
 
-    public ExcelReporter(
-            PrestationInterventionRepository prestationInterventionRepository,
-            EmployeRepository employeRepository
-    ) {
-        this.prestationInterventionRepository = prestationInterventionRepository;
-        this.employeRepository = employeRepository;
-    }
+    @Autowired
+    private ClientRepository clientRepository;
 
     private Map<String, Object> initReportData() {
         Map<String, Object> reportData = new HashMap<>();
@@ -56,7 +56,9 @@ public class ExcelReporter {
             Map<String, Object> reportData = this.initReportData();
             PrestationIntervention prestationIntervention = prestationInterventionRepository.findByIdPrestationIntervention(idPrestationIntervention);
             List<Employe> employes = employeRepository.findAllByPrestationInterventionId(idPrestationIntervention);
+            Client client = clientRepository.findByIdClient(prestationIntervention.getIdClient());
 
+            reportData.put("NOM_CLIENT", client.getNomEntreprise());
             reportData.put("INTERIEUR_EXTERIEUR", prestationIntervention.isInterieur() && prestationIntervention.isExterieur()
                     ? "Intérieur et extérieur"
                     : prestationIntervention.isExterieur()
