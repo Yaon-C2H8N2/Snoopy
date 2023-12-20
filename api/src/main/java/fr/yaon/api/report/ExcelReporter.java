@@ -29,7 +29,7 @@ public class ExcelReporter {
         this.employeRepository = employeRepository;
     }
 
-    private Map<String, Object> initReportData(){
+    private Map<String, Object> initReportData() {
         Map<String, Object> reportData = new HashMap<>();
 
         reportData.put("TYPE_PRESTATION", null);
@@ -52,23 +52,43 @@ public class ExcelReporter {
     }
 
     public byte[] generatePrestationReport(int idPrestationIntervention) {
-        try{
+        try {
             Map<String, Object> reportData = this.initReportData();
             PrestationIntervention prestationIntervention = prestationInterventionRepository.findByIdPrestationIntervention(idPrestationIntervention);
             List<Employe> employes = employeRepository.findAllByPrestationInterventionId(idPrestationIntervention);
 
+            reportData.put("INTERIEUR_EXTERIEUR", prestationIntervention.isInterieur() && prestationIntervention.isExterieur()
+                    ? "Intérieur et extérieur"
+                    : prestationIntervention.isExterieur()
+                    ? "Extérieur"
+                    : prestationIntervention.isInterieur()
+                    ? "Intérieur"
+                    : "Non renseigné"
+            );
+            reportData.put("HEURE_DEBUT", prestationIntervention.getHeureDebut() != null
+                    ? prestationIntervention.getHeureDebut().toString()
+                    : "Non renseignée"
+            );
+            reportData.put("HEURE_FIN", prestationIntervention.getHeureFin() != null
+                    ? prestationIntervention.getHeureFin().toString()
+                    : "Non renseignée"
+            );
+            reportData.put("COMMENTAIRES_PRESTATION", prestationIntervention.getCommentaire() != null
+                    ? prestationIntervention.getCommentaire()
+                    : ""
+            );
             for (int i = 0; i < employes.size(); i++) {
-                reportData.put("INTERVENANT_" + (i+1), employes.get(i).getPrenom()+" "+employes.get(i).getNom());
+                reportData.put("INTERVENANT_" + (i + 1), employes.get(i).getPrenom() + " " + employes.get(i).getNom());
             }
 
             FileInputStream file = new FileInputStream("src/main/resources/edition/template/edition_bon.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
-            for(Row row: workbook.getSheetAt(0)){
-                for(Cell cell: row){
-                    if(cell.getCellType() == CellType.STRING){
+            for (Row row : workbook.getSheetAt(0)) {
+                for (Cell cell : row) {
+                    if (cell.getCellType() == CellType.STRING) {
                         String cellValue = cell.getStringCellValue();
-                        if(reportData.containsKey(cellValue)){
+                        if (reportData.containsKey(cellValue)) {
                             String value = reportData.get(cellValue) == null ? "" : reportData.get(cellValue).toString();
                             cell.setCellValue(value);
                         }
@@ -80,7 +100,7 @@ public class ExcelReporter {
             workbook.write(out);
 
             return out.toByteArray();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
