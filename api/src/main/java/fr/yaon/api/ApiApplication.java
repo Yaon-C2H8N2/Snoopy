@@ -15,8 +15,7 @@ public class ApiApplication {
 	}
 
 	@Bean
-	public ExcelReporter excelReporter(PrestationInterventionRepository prestationInterventionRepository,
-									   EmployeRepository employeRepository) {
+	public ExcelReporter excelReporter() {
 		return new ExcelReporter();
 	}
 

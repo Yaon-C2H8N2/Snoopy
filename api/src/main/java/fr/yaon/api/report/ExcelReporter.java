@@ -1,10 +1,9 @@
 package fr.yaon.api.report;
 
-import fr.yaon.api.repositories.ClientRepository;
-import fr.yaon.api.repositories.EmployeRepository;
-import fr.yaon.api.repositories.PrestationInterventionRepository;
+import fr.yaon.api.repositories.*;
 import fr.yaon.api.web.models.Client;
 import fr.yaon.api.web.models.Employe;
+import fr.yaon.api.web.models.Prestation;
 import fr.yaon.api.web.models.PrestationIntervention;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -28,6 +27,12 @@ public class ExcelReporter {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private PrestationRepository prestationRepository;
+
+    @Autowired
+    private TypePrestationRepository typePrestationRepository;
 
     private Map<String, Object> initReportData() {
         Map<String, Object> reportData = new HashMap<>();
@@ -57,8 +62,11 @@ public class ExcelReporter {
             PrestationIntervention prestationIntervention = prestationInterventionRepository.findByIdPrestationIntervention(idPrestationIntervention);
             List<Employe> employes = employeRepository.findAllByPrestationInterventionId(idPrestationIntervention);
             Client client = clientRepository.findByIdClient(prestationIntervention.getIdClient());
+            Prestation prestation = prestationRepository.findByIdPrestation(prestationIntervention.getIdPrestation());
 
             reportData.put("NOM_CLIENT", client.getNomEntreprise());
+            reportData.put("TYPE_PRESTATION", typePrestationRepository.findByIdTypePrestation(prestation.getIdTypePrestation()).getNomTypePrestation());
+            reportData.put("NOM_PRESTATION", prestation.getNomPrestation());
             reportData.put("INTERIEUR_EXTERIEUR", prestationIntervention.isInterieur() && prestationIntervention.isExterieur()
                     ? "Intérieur et extérieur"
                     : prestationIntervention.isExterieur()
