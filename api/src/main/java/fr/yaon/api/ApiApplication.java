@@ -13,10 +13,4 @@ public class ApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
 	}
-
-	@Bean
-	public ExcelReporter excelReporter() {
-		return new ExcelReporter();
-	}
-
 }

@@ -15,4 +15,7 @@ public interface EmployeRepository extends Repository<Employe, Integer> {
         employe_prestation_intervention.id_prestation_intervention = :id
     """)
     List<Employe> findAllByPrestationInterventionId(int id);
+    List<Employe> findAll();
+    Employe save(Employe employe);
+    void delete(Employe employe);
 }
