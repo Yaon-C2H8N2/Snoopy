@@ -1,3 +1,5 @@
 .idea/
 db/data/
 /api/target/
+.DS_Store
+/client/node_modules/
