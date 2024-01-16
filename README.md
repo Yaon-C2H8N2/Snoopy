@@ -19,8 +19,9 @@ docker-compose up
 
 ### Usage
 
-Open your browser and go to `http://localhost:8080`
+Open your browser and go to `http://localhost:80`
 
 ### Credits
 
 - [Gotenberg](https://github.com/gotenberg/gotenberg) used to convert excel generated invoices to pdf.
+- [Nginx](https://github.com/nginx/nginx) used to host the frontend and as a reverse proxy for the backend.
