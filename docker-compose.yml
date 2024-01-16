@@ -33,6 +33,16 @@ services:
     networks:
       - backend
 
+  client:
+    build: client
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - backend
+    depends_on:
+      - api
+
 networks:
   backend:
     driver: bridge
