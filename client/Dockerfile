@@ -15,7 +15,6 @@ RUN ln -snf /usr/share/zoneinfo/"Europe/Paris" /etc/localtime && echo $TZ > /etc
 WORKDIR /var/www/html
 
 COPY --from=builder /app/dist /var/www/html
-COPY ./nginx.conf /etc/nginx/nginx.conf
 
 CMD ["nginx"]
 

@@ -35,6 +35,9 @@ services:
 
   client:
     build: client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available/
     ports:
       - "80:80"
       - "443:443"
