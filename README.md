@@ -26,3 +26,4 @@ Open your browser and go to `http://localhost:80`
 - [Gotenberg](https://github.com/gotenberg/gotenberg) used to convert excel generated invoices to pdf.
 - [NextUI](https://github.com/nextui-org/nextui) used as a component library for the frontend.
 - [Nginx](https://github.com/nginx/nginx) used to host the frontend and as a reverse proxy for the backend.
+- [react-signature-canvas](https://github.com/agilgur5/react-signature-canvas) a react component to draw signatures.

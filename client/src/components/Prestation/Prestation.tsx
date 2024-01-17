@@ -38,6 +38,7 @@ function Prestation() {
             prestations={prestations}
             intervenants={intervenants}
             clients={clients}
+            onValidate={(base64signature) => console.log(base64signature)}
         />
     )
 }

@@ -1,5 +1,6 @@
 import {Autocomplete, AutocompleteItem, Button, Checkbox, Input, Select, SelectItem, Textarea} from "@nextui-org/react";
 import {useState} from "react";
+import SignatureCanvas from 'react-signature-canvas';
 
 //definition des props
 type PrestationFormProps = {
@@ -7,10 +8,13 @@ type PrestationFormProps = {
     intervenants: { nom: string, prenom: string, id: number }[],
     prestations: { label: string, idTypePrestation: number, id: number }[],
     clients: { idClient: number, nomEntreprise: string, adresse: string, adresseMail: string }[],
+    onValidate: (base64signature: string) => void,
 }
 
 function PrestationForm(props: PrestationFormProps) {
     const [selectedIntervenants, setSelectedIntervenants] = useState(Array<number>);
+
+    let canvasRef: SignatureCanvas | null;
 
     return (
         <>
@@ -103,7 +107,14 @@ function PrestationForm(props: PrestationFormProps) {
                 <div>
                     <Checkbox>Le client n'a pas souhaité signer le bon</Checkbox>
                 </div>
-                {/*todo : champs de signature*/}
+                    <SignatureCanvas
+                        penColor="black"
+                        backgroundColor={"transparent"}
+                        canvasProps={{width: 500, height: 100}}
+                        ref={(ref) => {
+                            canvasRef = ref
+                        }}
+                    />
             </div>
             <h2>Commentaires :</h2>
             <div className={"items-center flex-col"}>
@@ -113,6 +124,8 @@ function PrestationForm(props: PrestationFormProps) {
                     className="max-w-xs"
                 />
             </div>
+            <Button color={"primary"} variant={"shadow"}
+                    onClick={() => props.onValidate(canvasRef?.toDataURL() || "")}>Valider</Button>
         </>
     )
 }
