@@ -33,13 +33,15 @@ function Prestation() {
     ];
 
     return (
-        <PrestationForm
-            typePrestations={typePrestations}
-            prestations={prestations}
-            intervenants={intervenants}
-            clients={clients}
-            onValidate={(base64signature) => console.log(base64signature)}
-        />
+        <div className={"flex flex-wrap justify-center shrink-0 space-x-5"}>
+            <PrestationForm
+                typePrestations={typePrestations}
+                prestations={prestations}
+                intervenants={intervenants}
+                clients={clients}
+                onValidate={(base64signature) => console.log(base64signature)}
+            />
+        </div>
     )
 }
 
