@@ -1,39 +1,61 @@
 import PrestationForm from "./PrestationForm.tsx";
+import {useEffect, useState} from "react";
 
 function Prestation() {
+    const [typePrestations, setTypePrestations] = useState(Array<{
+        nomTypePrestation: string,
+        idTypePrestation: number
+    }>);
+    const [prestations, setPrestations] = useState(Array<{
+        nomPrestation: string,
+        idTypePrestation: number,
+        idPrestation: number
+    }>);
+    const [intervenants, setIntervenants] = useState(Array<{
+        nom: string,
+        prenom: string,
+        idEmploye: number
+    }>);
+    const [clients, setClients] = useState(Array<{
+        idClient: number,
+        nomEntreprise: string,
+        adresse: string,
+        adresseMail: string
+    }>);
 
-    //todo : fetch avec api
-    const typePrestations = [
-        {label: "Vitrerie", value: 1},
-        {label: "Nettoyage", value: 2},
-    ];
-
-    //todo : fetch avec api
-    const prestations = [
-        {label: "Nettoyage vitres", idTypePrestation: 1, id: 1},
-        {label: "Décapage vitres", idTypePrestation: 1, id: 2},
-        {label: "Nettoyage sols", idTypePrestation: 2, id: 3},
-        {label: "Nettoyage murs", idTypePrestation: 2, id: 4},
-    ];
-
-    //todo : fetch avec api
-    const intervenants = [
-        {prenom: "Intervenant", nom: "1", id: 1},
-        {prenom: "Intervenant", nom: "2", id: 2},
-        {prenom: "Intervenant", nom: "3", id: 3},
-        {prenom: "Intervenant", nom: "4", id: 4},
-        {prenom: "Intervenant", nom: "5", id: 5},
-    ];
-
-    //todo : fetch avec api
-    const clients = [
-        {idClient: 1, nomEntreprise: "Entreprise 1", adresse: "Adresse 1", adresseMail: "Mail 1"},
-        {idClient: 2, nomEntreprise: "Entreprise 2", adresse: "Adresse 2", adresseMail: "Mail 2"},
-        {idClient: 3, nomEntreprise: "Entreprise 3", adresse: "Adresse 3", adresseMail: "Mail 3"},
-    ];
+    useEffect(() => {
+        fetch("/api/prestation/type/prestation", {
+            method: "GET",
+        })
+            .then((response) => (response.json()))
+            .then((data) => {
+                setTypePrestations(data);
+            });
+        fetch("/api/prestation", {
+            method: "GET",
+        })
+            .then((response) => (response.json()))
+            .then((data) => {
+                setPrestations(data);
+            });
+        fetch("/api/employe", {
+            method: "GET",
+        })
+            .then((response) => (response.json()))
+            .then((data) => {
+                setIntervenants(data);
+            });
+        fetch("/api/client", {
+            method: "GET",
+        })
+            .then((response) => (response.json()))
+            .then((data) => {
+                setClients(data);
+            });
+    }, [])
 
     return (
-        <div className={"flex flex-wrap justify-center shrink-0 space-x-5"}>
+        <div className={"flex flex-wrap justify-center shrink-0 space-x-5 space-y-5"}>
             <PrestationForm
                 typePrestations={typePrestations}
                 prestations={prestations}

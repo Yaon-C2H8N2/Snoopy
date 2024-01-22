@@ -4,9 +4,9 @@ import SignatureCanvas from 'react-signature-canvas';
 
 //definition des props
 type PrestationFormProps = {
-    typePrestations: { label: string, value: number }[],
-    intervenants: { nom: string, prenom: string, id: number }[],
-    prestations: { label: string, idTypePrestation: number, id: number }[],
+    typePrestations: { nomTypePrestation: string, idTypePrestation: number }[],
+    intervenants: { nom: string, prenom: string, idEmploye: number }[],
+    prestations: { nomPrestation: string, idTypePrestation: number, idPrestation: number }[],
     clients: { idClient: number, nomEntreprise: string, adresse: string, adresseMail: string }[],
     onValidate: (base64signature: string) => void,
 }
@@ -25,8 +25,8 @@ function PrestationForm(props: PrestationFormProps) {
                         label="Sélectionnez un type de prestation"
                     >
                         {props.typePrestations.map((typePrestation) => (
-                            <SelectItem key={typePrestation.value} value={typePrestation.value}>
-                                {typePrestation.label}
+                            <SelectItem key={typePrestation.idTypePrestation} value={typePrestation.idTypePrestation}>
+                                {typePrestation.nomTypePrestation}
                             </SelectItem>
                         ))}
                     </Select>
@@ -35,7 +35,7 @@ function PrestationForm(props: PrestationFormProps) {
                     <h2>Intervenants sur la prestation :</h2>
                     <ol>
                         {selectedIntervenants.length > 0 ? selectedIntervenants.map((intervenant) => (
-                            <li key={props.intervenants[intervenant].id}>
+                            <li key={props.intervenants[intervenant].idEmploye}>
                                 {props.intervenants[intervenant].prenom + " " + props.intervenants[intervenant].nom}
                             </li>
                         )) : <li>Aucun intervenant sélectionné</li>
@@ -48,12 +48,12 @@ function PrestationForm(props: PrestationFormProps) {
                             defaultItems={props.intervenants}
                         >
                             {(intervenant) => <AutocompleteItem
-                                key={intervenant.id}>{intervenant.prenom + " " + intervenant.nom}</AutocompleteItem>}
+                                key={intervenant.idEmploye}>{intervenant.prenom + " " + intervenant.nom}</AutocompleteItem>}
                         </Autocomplete>
                         <Button
                             color={"primary"}
                             variant={"shadow"}
-                            onClick={() => setSelectedIntervenants([1, 2, 3])}
+                            onClick={() => setSelectedIntervenants([0, 1, 2])}
                         >
                             Ajouter
                         </Button>
@@ -67,8 +67,8 @@ function PrestationForm(props: PrestationFormProps) {
                             label="Sélectionnez une prestation"
                         >
                             {props.prestations.map((prestation) => (
-                                <SelectItem key={prestation.id} value={prestation.label}>
-                                    {prestation.label}
+                                <SelectItem key={prestation.idPrestation} value={prestation.idPrestation}>
+                                    {prestation.nomPrestation}
                                 </SelectItem>
                             ))}
                         </Select>
