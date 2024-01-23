@@ -3,6 +3,7 @@ package fr.yaon.api.web.services;
 import com.fasterxml.jackson.core.JsonFactoryBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.yaon.api.repositories.PrestationInterventionRepository;
 import fr.yaon.api.repositories.PrestationRepository;
 import fr.yaon.api.repositories.TypePrestationRepository;
@@ -53,7 +54,7 @@ public class PrestationEndpoint {
     public String savePrestation(@RequestBody PrestationIntervention prestationIntervention, HttpServletResponse response) {
         try {
             prestationInterventionRepository.save(prestationIntervention);
-            return new ObjectMapper().writeValueAsString(prestationIntervention);
+            return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(prestationIntervention);
         } catch (Exception e) {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.setStatus(500);

@@ -54,14 +54,30 @@ function Prestation() {
             });
     }, [])
 
+    //TODO : fix any
+    const handleValidate = async (prestationIntervention: any ,base64signature: string) => {
+        await fetch("/api/prestation/save", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(prestationIntervention),
+        })
+            .then((response) => (response.json()))
+            .then((data) => {
+                console.log(data);
+            });
+        console.log(base64signature);
+    }
+
     return (
-        <div className={"flex flex-wrap justify-center shrink-0 space-x-5 space-y-5"}>
+        <div className={"flex flex-wrap justify-center shrink-0 space-x-5 space-y-5 mt-40"}>
             <PrestationForm
                 typePrestations={typePrestations}
                 prestations={prestations}
                 intervenants={intervenants}
                 clients={clients}
-                onValidate={(base64signature) => console.log(base64signature)}
+                onValidate={(prestationIntervention, base64signature) => handleValidate(prestationIntervention, base64signature)}
             />
         </div>
     )

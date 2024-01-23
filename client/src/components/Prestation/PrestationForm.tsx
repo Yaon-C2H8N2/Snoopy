@@ -8,13 +8,51 @@ type PrestationFormProps = {
     intervenants: { nom: string, prenom: string, idEmploye: number }[],
     prestations: { nomPrestation: string, idTypePrestation: number, idPrestation: number }[],
     clients: { idClient: number, nomEntreprise: string, adresse: string, adresseMail: string }[],
-    onValidate: (base64signature: string) => void,
+    onValidate: (prestationIntervention: object, base64signature: string) => void,
 }
 
 function PrestationForm(props: PrestationFormProps) {
-    const [selectedIntervenants, setSelectedIntervenants] = useState(Array<number>);
+    const [selectedIntervenants, setSelectedIntervenants] = useState(Array<{
+        nom: string,
+        prenom: string,
+        idEmploye: number
+    }>);
+    const [selectedIntervenantId, setSelectedIntervenantId] = useState<number>();
+    const [prestationIntervention, setPrestationIntervention] = useState<{
+        idPrestation: number,
+        idClient: number,
+        datePrestation: string,
+        heureDebut: string,
+        heureFin: string,
+        interieur: boolean,
+        exterieur: boolean,
+        commentaire: string,
+    }>({
+        idPrestation: -1,
+        idClient: -1,
+        datePrestation: "",
+        heureDebut: "",
+        heureFin: "",
+        interieur: false,
+        exterieur: false,
+        commentaire: "",
+    });
 
     let canvasRef: SignatureCanvas | null;
+
+    const handleAjoutIntervenant = () => {
+        if (selectedIntervenantId) {
+            const intervenant = props.intervenants.find((intervenant) => intervenant.idEmploye === selectedIntervenantId);
+            if (intervenant && !selectedIntervenants.includes(intervenant)) {
+                setSelectedIntervenants([...selectedIntervenants, intervenant]);
+            }
+        }
+    }
+
+    const handleValidate = () => {
+        setPrestationIntervention({...prestationIntervention, datePrestation: new Date().toISOString()})
+        props.onValidate(prestationIntervention, canvasRef?.toDataURL() || "");
+    }
 
     return (
         <>
@@ -22,6 +60,7 @@ function PrestationForm(props: PrestationFormProps) {
                 <div className={"flex flex-row items-center"}>
                     <div>Type de prestation</div>
                     <Select
+                        id={"typePrestation"}
                         label="Sélectionnez un type de prestation"
                     >
                         {props.typePrestations.map((typePrestation) => (
@@ -34,10 +73,8 @@ function PrestationForm(props: PrestationFormProps) {
                 <div className={"flex flex-col space-y-2.5"}>
                     <h2>Intervenants sur la prestation :</h2>
                     <ol>
-                        {selectedIntervenants.length > 0 ? selectedIntervenants.map((intervenant) => (
-                            <li key={props.intervenants[intervenant].idEmploye}>
-                                {props.intervenants[intervenant].prenom + " " + props.intervenants[intervenant].nom}
-                            </li>
+                        {selectedIntervenants.length > 0 ? selectedIntervenants.map((selectedIntervenant) => (
+                            <li key={selectedIntervenant?.idEmploye}>{selectedIntervenant?.prenom + " " + selectedIntervenant?.nom}</li>
                         )) : <li>Aucun intervenant sélectionné</li>
                         }
                     </ol>
@@ -45,15 +82,22 @@ function PrestationForm(props: PrestationFormProps) {
                         <Autocomplete
                             label="Ajouter un intervenant"
                             placeholder="Nom de l'intervenant"
-                            defaultItems={props.intervenants}
+                            onSelectionChange={(value) => setSelectedIntervenantId(Number(value))}
                         >
-                            {(intervenant) => <AutocompleteItem
-                                key={intervenant.idEmploye}>{intervenant.prenom + " " + intervenant.nom}</AutocompleteItem>}
+                            {props.intervenants.map((intervenant) => {
+                                return (
+                                    <AutocompleteItem
+                                        key={intervenant.idEmploye}
+                                    >
+                                        {intervenant.prenom + " " + intervenant.nom}
+                                    </AutocompleteItem>
+                                )
+                            })}
                         </Autocomplete>
                         <Button
                             color={"primary"}
                             variant={"shadow"}
-                            onClick={() => setSelectedIntervenants([0, 1, 2])}
+                            onClick={() => handleAjoutIntervenant()}
                         >
                             Ajouter
                         </Button>
@@ -65,6 +109,12 @@ function PrestationForm(props: PrestationFormProps) {
                         <div>Prestation</div>
                         <Select
                             label="Sélectionnez une prestation"
+                            onChange={(event) => {
+                                setPrestationIntervention({
+                                    ...prestationIntervention,
+                                    idPrestation: Number(event.target.value)
+                                })
+                            }}
                         >
                             {props.prestations.map((prestation) => (
                                 <SelectItem key={prestation.idPrestation} value={prestation.idPrestation}>
@@ -74,9 +124,33 @@ function PrestationForm(props: PrestationFormProps) {
                         </Select>
                     </div>
                     <div className={"flex flex-row items-center space-x-5"}>
+                        <div>
+                            <Checkbox onChange={(event) => {
+                                setPrestationIntervention({
+                                    ...prestationIntervention,
+                                    interieur: Boolean(event.target.checked)
+                                })
+                            }}>Interieur</Checkbox>
+                        </div>
+                        <div>
+                            <Checkbox onChange={(event) => {
+                                setPrestationIntervention({
+                                    ...prestationIntervention,
+                                    exterieur: Boolean(event.target.checked)
+                                })
+                            }}>Exterieur</Checkbox>
+                        </div>
+                    </div>
+                    <div className={"flex flex-row items-center space-x-5"}>
                         <div>Client</div>
                         <Select
                             label="Sélectionnez un client"
+                            onChange={(event) => {
+                                setPrestationIntervention({
+                                    ...prestationIntervention,
+                                    idClient: Number(event.target.value)
+                                })
+                            }}
                         >
                             {props.clients.map((client) => (
                                 <SelectItem key={client.idClient} value={client.nomEntreprise}>
@@ -85,25 +159,27 @@ function PrestationForm(props: PrestationFormProps) {
                             ))}
                         </Select>
                     </div>
-                    <div className={"flex flex-row items-center space-x-5"}>
-                        <div>
-                            <Checkbox>Interieur</Checkbox>
-                        </div>
-                        <div>
-                            <Checkbox>Exterieur</Checkbox>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div className={"w-2/6 min-w-96 flex flex-col space-y-5"}>
                 <div className={"flex flex-row justify-center space-x-5"}>
                     <div className={"flex flex-row w-full"}>
                         <div>Heure de début</div>
-                        <Input type={"time"}/>
+                        <Input type={"time"} onChange={(event) => {
+                            setPrestationIntervention({
+                                ...prestationIntervention,
+                                heureDebut: event.target.value
+                            })
+                        }}/>
                     </div>
                     <div className={"flex flex-row w-full"}>
                         <div>Heure de fin</div>
-                        <Input type={"time"}/>
+                        <Input type={"time"} onChange={(event) => {
+                            setPrestationIntervention({
+                                ...prestationIntervention,
+                                heureFin: event.target.value
+                            })
+                        }}/>
                     </div>
                 </div>
                 <div className={"flex flex-col justify-center space-y-2.5"}>
@@ -125,6 +201,12 @@ function PrestationForm(props: PrestationFormProps) {
                     <Textarea
                         label="Commentaires"
                         placeholder="Commentaires sur la prestation"
+                        onChange={(event) => {
+                            setPrestationIntervention({
+                                ...prestationIntervention,
+                                commentaire: event.target.value
+                            })
+                        }}
                     />
                 </div>
             </div>
@@ -132,7 +214,9 @@ function PrestationForm(props: PrestationFormProps) {
                 <Button
                     color={"primary"}
                     variant={"shadow"}
-                    onClick={() => props.onValidate(canvasRef?.toDataURL() || "")}
+                    onClick={() => {
+                        handleValidate();
+                    }}
                 >
                     Valider
                 </Button>

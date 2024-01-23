@@ -1,9 +1,12 @@
 package fr.yaon.api.web.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalTime;
 
 public class PrestationIntervention {
     @Id
@@ -11,8 +14,8 @@ public class PrestationIntervention {
     private int idPrestation;
     private int idClient;
     private Date datePrestation;
-    private Time heureDebut;
-    private Time heureFin;
+    private @JsonFormat(pattern = "HH:mm") LocalTime heureDebut;
+    private @JsonFormat(pattern = "HH:mm") LocalTime heureFin;
     private boolean interieur;
     private boolean exterieur;
     private String commentaire;
@@ -49,19 +52,19 @@ public class PrestationIntervention {
         this.datePrestation = datePrestation;
     }
 
-    public Time getHeureDebut() {
+    public LocalTime getHeureDebut() {
         return heureDebut;
     }
 
-    public void setHeureDebut(Time heureDebut) {
+    public void setHeureDebut(LocalTime heureDebut) {
         this.heureDebut = heureDebut;
     }
 
-    public Time getHeureFin() {
+    public LocalTime getHeureFin() {
         return heureFin;
     }
 
-    public void setHeureFin(Time heureFin) {
+    public void setHeureFin(LocalTime heureFin) {
         this.heureFin = heureFin;
     }
 
