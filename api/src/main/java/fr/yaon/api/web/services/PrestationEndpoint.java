@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+
 @RestController
 @RequestMapping("/prestation")
 public class PrestationEndpoint {
@@ -53,6 +55,7 @@ public class PrestationEndpoint {
     @PutMapping("/save")
     public String savePrestation(@RequestBody PrestationIntervention prestationIntervention, HttpServletResponse response) {
         try {
+            prestationIntervention.setDatePrestation(new Date(System.currentTimeMillis()));
             prestationInterventionRepository.save(prestationIntervention);
             return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(prestationIntervention);
         } catch (Exception e) {

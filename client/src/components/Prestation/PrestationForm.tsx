@@ -50,7 +50,6 @@ function PrestationForm(props: PrestationFormProps) {
     }
 
     const handleValidate = () => {
-        setPrestationIntervention({...prestationIntervention, datePrestation: new Date().toISOString()})
         props.onValidate(prestationIntervention, canvasRef?.toDataURL() || "");
     }
 

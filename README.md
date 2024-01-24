@@ -1,4 +1,5 @@
 # Snoopy
+
 ### Introduction
 
 Snoopy is a simple webapp that aims to help you send invoices to clients.
@@ -16,6 +17,13 @@ Run the following command from the root of the project (where the `docker-compos
 ```bash
 docker-compose up
 ```
+
+This should build and start the following containers:
+
+- api : containing the spring boot app that acts as the backend
+- db : containing the postgresql database
+- pdfconverter : containing the gotenberg pdf converter
+- client : containing an nginx server that hosts the frontend and acts as a reverse proxy for the backend
 
 ### Usage
 
