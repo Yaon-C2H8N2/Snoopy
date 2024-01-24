@@ -55,7 +55,7 @@ function Prestation() {
     }, [])
 
     //TODO : fix any
-    const handleValidate = async (prestationIntervention: any ,base64signature: string) => {
+    const handleValidate = async (prestationIntervention: any, base64signature: string) => {
         await fetch("/api/prestation/save", {
             method: "PUT",
             headers: {
@@ -71,15 +71,13 @@ function Prestation() {
     }
 
     return (
-        <div className={"flex flex-wrap justify-center shrink-0 space-x-5 space-y-5 mt-40"}>
-            <PrestationForm
-                typePrestations={typePrestations}
-                prestations={prestations}
-                intervenants={intervenants}
-                clients={clients}
-                onValidate={(prestationIntervention, base64signature) => handleValidate(prestationIntervention, base64signature)}
-            />
-        </div>
+        <PrestationForm
+            typePrestations={typePrestations}
+            prestations={prestations}
+            intervenants={intervenants}
+            clients={clients}
+            onValidate={(prestationIntervention, base64signature) => handleValidate(prestationIntervention, base64signature)}
+        />
     )
 }
 
