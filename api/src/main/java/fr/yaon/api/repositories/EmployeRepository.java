@@ -17,5 +17,14 @@ public interface EmployeRepository extends Repository<Employe, Integer> {
     List<Employe> findAllByPrestationInterventionId(int id);
     List<Employe> findAll();
     Employe save(Employe employe);
+
+    @Query("""
+        INSERT INTO employe_prestation_intervention(id_employe, id_prestation_intervention) 
+        SELECT id_employe, :idPrestationIntervention FROM employe
+        WHERE id_employe IN (:idEmployes)
+        RETURNING employe_prestation_intervention.id_employe_prestation_intervention
+    """)
+    List<Integer> addToPrestationIntervention(int idPrestationIntervention, List<Integer> idEmployes);
+
     void delete(Employe employe);
 }
