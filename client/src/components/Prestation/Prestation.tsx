@@ -1,7 +1,10 @@
 import PrestationForm from "./PrestationForm.tsx";
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function Prestation() {
+    const navigate = useNavigate();
+
     const [typePrestations, setTypePrestations] = useState(Array<{
         nomTypePrestation: string,
         idTypePrestation: number
@@ -56,7 +59,7 @@ function Prestation() {
 
     //TODO : fix any
     const handleValidate = async (prestationIntervention: any, base64signature: string) => {
-        await fetch("/api/prestation/save", {
+        const response = await fetch("/api/prestation/save", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -65,9 +68,9 @@ function Prestation() {
         })
             .then((response) => (response.json()))
             .then((data) => {
-                console.log(data);
+                return data;
             });
-        console.log(base64signature);
+        navigate('/recap', {state: {idPrestationIntervention: response.idPrestationIntervention}})
     }
 
     return (

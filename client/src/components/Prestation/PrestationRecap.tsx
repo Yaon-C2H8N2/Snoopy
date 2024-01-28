@@ -1,7 +1,11 @@
+import {useLocation} from "react-router-dom";
+
 function PrestationRecap() {
+    const {state} = useLocation();
+
     return (
         <div>
-            Ouais ouais ouais
+            Ouais ouais ouais presta id : {state.idPrestationIntervention}
         </div>
     )
 }
