@@ -45,7 +45,8 @@ CREATE TABLE employe_prestation_intervention
 (
     id_employe_prestation_intervention SERIAL PRIMARY KEY,
     id_employe                         INTEGER REFERENCES employe (id_employe),
-    id_prestation_intervention         INTEGER REFERENCES prestation_intervention (id_prestation_intervention)
+    id_prestation_intervention         INTEGER REFERENCES prestation_intervention (id_prestation_intervention),
+    UNIQUE (id_employe, id_prestation_intervention)
 );
 
 INSERT INTO client
