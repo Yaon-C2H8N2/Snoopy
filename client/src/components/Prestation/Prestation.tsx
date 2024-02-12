@@ -57,8 +57,8 @@ function Prestation() {
             });
     }, [])
 
-    //TODO : fix any
-    const handleValidate = async (prestationIntervention: any, base64signature: string) => {
+    const handleValidate = async (prestationIntervention: object) => {
+        console.log(prestationIntervention);
         const response = await fetch("/api/prestation/save", {
             method: "PUT",
             headers: {
@@ -79,7 +79,7 @@ function Prestation() {
             prestations={prestations}
             intervenants={intervenants}
             clients={clients}
-            onValidate={(prestationIntervention, base64signature) => handleValidate(prestationIntervention, base64signature)}
+            onValidate={(prestationIntervention) => handleValidate(prestationIntervention)}
         />
     )
 }

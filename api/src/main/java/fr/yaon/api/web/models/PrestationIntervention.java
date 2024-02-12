@@ -17,6 +17,8 @@ public class PrestationIntervention {
     private boolean interieur;
     private boolean exterieur;
     private String commentaire;
+    private boolean confirmationSignature;
+    private String signature;
 
     public int getIdPrestationIntervention() {
         return idPrestationIntervention;
@@ -88,5 +90,21 @@ public class PrestationIntervention {
 
     public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
+    }
+
+    public boolean isConfirmationSignature() {
+        return confirmationSignature;
+    }
+
+    public void setConfirmationSignature(boolean confirmationSignature) {
+        this.confirmationSignature = confirmationSignature;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

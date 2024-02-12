@@ -7,6 +7,7 @@ import fr.yaon.api.web.models.Prestation;
 import fr.yaon.api.web.models.PrestationIntervention;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,17 @@ public class ExcelReporter {
         return reportData;
     }
 
+    public void insertSignature(XSSFWorkbook workbook, String signature, int row, int col) {
+        byte[] signatureBytes = Base64.getDecoder().decode(signature);
+        int pictureIdx = workbook.addPicture(signatureBytes, XSSFWorkbook.PICTURE_TYPE_PNG);
+        ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
+        anchor.setCol1(col);
+        anchor.setRow1(row);
+        anchor.setCol2(col + 7);
+        anchor.setRow2(row + 5);
+        workbook.getSheetAt(0).createDrawingPatriarch().createPicture(anchor, pictureIdx);
+    }
+
     public byte[] generatePrestationReport(int idPrestationIntervention) {
         try {
             Map<String, Object> reportData = this.initReportData();
@@ -87,6 +100,11 @@ public class ExcelReporter {
                     ? prestationIntervention.getCommentaire()
                     : ""
             );
+            reportData.put("CONFIRMATION_SIGNATURE", prestationIntervention.isConfirmationSignature() ? "Oui" : "Non");
+            reportData.put("SIGNATURE_CLIENT", prestationIntervention.getSignature() != null
+                    ? prestationIntervention.getSignature()
+                    : "Non renseignée"
+            );
             for (int i = 0; i < employes.size(); i++) {
                 reportData.put("INTERVENANT_" + (i + 1), employes.get(i).getPrenom() + " " + employes.get(i).getNom());
             }
@@ -99,8 +117,14 @@ public class ExcelReporter {
                     if (cell.getCellType() == CellType.STRING) {
                         String cellValue = cell.getStringCellValue();
                         if (reportData.containsKey(cellValue)) {
-                            String value = reportData.get(cellValue) == null ? "" : reportData.get(cellValue).toString();
-                            cell.setCellValue(value);
+                            if (cellValue.equals("SIGNATURE_CLIENT") && prestationIntervention.isConfirmationSignature()){
+                                cell.setCellValue("");
+                                this.insertSignature(workbook, reportData.get(cellValue).toString(), cell.getRowIndex(), cell.getColumnIndex());
+                            }
+                            else {
+                                String value = reportData.get(cellValue) == null ? "" : reportData.get(cellValue).toString();
+                                cell.setCellValue(value);
+                            }
                         }
                     }
                 }

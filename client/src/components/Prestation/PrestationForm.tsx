@@ -1,5 +1,5 @@
 import {Autocomplete, AutocompleteItem, Button, Checkbox, Input, Select, SelectItem, Textarea} from "@nextui-org/react";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import SignatureCanvas from 'react-signature-canvas';
 
 //definition des props
@@ -8,7 +8,7 @@ type PrestationFormProps = {
     intervenants: { nom: string, prenom: string, idEmploye: number }[],
     prestations: { nomPrestation: string, idTypePrestation: number, idPrestation: number }[],
     clients: { idClient: number, nomEntreprise: string, adresse: string, adresseMail: string }[],
-    onValidate: (prestationIntervention: object, base64signature: string) => void,
+    onValidate: (prestationIntervention: object) => void,
 }
 
 function PrestationForm(props: PrestationFormProps) {
@@ -30,9 +30,9 @@ function PrestationForm(props: PrestationFormProps) {
         }
     }
 
-    const handleValidate = (event: any) => {
+    const handleValidate = (event: FormEvent) => {
         event.preventDefault();
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.target as HTMLFormElement);
         const prestationIntervention = {
             idPrestation: formData.get("idPrestation"),
             idClient: formData.get("idClient"),
@@ -42,8 +42,10 @@ function PrestationForm(props: PrestationFormProps) {
             interieur: formData.get("interieur") !== null,
             exterieur: formData.get("exterieur") !== null,
             commentaire: formData.get("commentaire"),
+            confirmationSignature: !formData.get("confirmation_signature"),
+            signature: canvasRef?.toDataURL() || "",
         };
-        props.onValidate(prestationIntervention, canvasRef?.toDataURL() || "");
+        props.onValidate(prestationIntervention);
     }
 
     return (
@@ -152,7 +154,7 @@ function PrestationForm(props: PrestationFormProps) {
                 <div className={"flex flex-col justify-center space-y-2.5"}>
                     <h2>Signature du client :</h2>
                     <div>
-                        <Checkbox>Le client n'a pas souhaité signer le bon</Checkbox>
+                        <Checkbox name={"confirmation_signature"}>Le client n'a pas souhaité signer le bon</Checkbox>
                     </div>
                     <SignatureCanvas
                         penColor="black"
