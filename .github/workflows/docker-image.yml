@@ -2,6 +2,11 @@ name: Docker Image Build
 
 on:
   workflow_dispatch:
+    inputs:
+      image_version:
+        description: 'The version of the Docker image'
+        required: true
+
 
 jobs:
   build-api:
@@ -10,11 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Building the API Docker image
-        run: docker build ./api/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
+        run: docker build ./api/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
       - name: Push the Docker images to the ghcr.io registry
         run: |
           docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GITHUB_TOKEN }}
           docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
+          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
 
   build-client:
     runs-on: ubuntu-latest
@@ -22,8 +28,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Building the client Docker image
-      run: docker build ./client/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
+      run: docker build ./client/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
     - name: Push the Docker images to the ghcr.io registry
       run: |
         docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GITHUB_TOKEN }}
         docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
+        docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
