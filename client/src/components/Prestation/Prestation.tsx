@@ -1,6 +1,7 @@
  import PrestationForm from "./PrestationForm.tsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+ import Network from "../Network/Network.ts";
 
 function Prestation() {
     const navigate = useNavigate();
@@ -27,28 +28,28 @@ function Prestation() {
     }>);
 
     useEffect(() => {
-        fetch("/api/prestation/type/prestation", {
+        Network.fetch("/api/prestation/type/prestation", {
             method: "GET",
         })
             .then((response) => (response.json()))
             .then((data) => {
                 setTypePrestations(data);
             });
-        fetch("/api/prestation", {
+        Network.fetch("/api/prestation", {
             method: "GET",
         })
             .then((response) => (response.json()))
             .then((data) => {
                 setPrestations(data);
             });
-        fetch("/api/employe", {
+        Network.fetch("/api/employe", {
             method: "GET",
         })
             .then((response) => (response.json()))
             .then((data) => {
                 setIntervenants(data);
             });
-        fetch("/api/client", {
+        Network.fetch("/api/client", {
             method: "GET",
         })
             .then((response) => (response.json()))
@@ -59,7 +60,7 @@ function Prestation() {
 
     const handleValidate = async (prestationIntervention: object) => {
         console.log(prestationIntervention);
-        const response = await fetch("/api/prestation/save", {
+        const response = await Network.fetch("/api/prestation/save", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

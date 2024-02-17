@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider as Auth, User } from './auth.ts';
+import Cookies from "js-cookie";
 
 interface IAuthContextType {
     user: User | null;
@@ -53,8 +54,9 @@ function useAuth() {
 function RequireAuth({ children }: { children: JSX.Element }) {
     const auth = useAuth();
     const location = useLocation();
+    const token = Cookies.get("token");
 
-    if (!auth.user) {
+    if (!auth.user && token === undefined) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 

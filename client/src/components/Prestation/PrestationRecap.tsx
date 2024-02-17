@@ -5,7 +5,7 @@ function PrestationRecap() {
 
     return (
         <div>
-            Ouais ouais ouais presta id : {state.idPrestationIntervention}
+            Ouais ouais ouais presta id : {state?.idPrestationIntervention}
         </div>
     )
 }

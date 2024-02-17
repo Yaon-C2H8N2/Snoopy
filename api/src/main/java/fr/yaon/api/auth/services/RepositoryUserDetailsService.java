@@ -17,8 +17,6 @@ public class RepositoryUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.findByUsername(username);
         if (utilisateur != null) {
-            System.out.println("Auth as " + utilisateur.getUsername() + " with password " + utilisateur.getPassword() + " and role " + utilisateur.getRole());
-            utilisateur.getAuthorities().forEach(authority -> System.out.println(authority.getAuthority()));
             return utilisateur;
         } else {
             throw new UsernameNotFoundException("Utilisateur non trouvé");

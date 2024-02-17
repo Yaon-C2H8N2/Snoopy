@@ -33,6 +33,8 @@ public class AuthenticationEndpoint {
             return e.getMessage();
         }
         Utilisateur utilisateur = (Utilisateur) repositoryUserDetailsService.loadUserByUsername(authRequest.username);
-        return jwtUtil.generateToken(utilisateur);
+        String token = jwtUtil.generateToken(utilisateur);
+        response.addHeader("Set-Cookie", "token=" + token + "; Path=/;");
+        return token;
     }
 }
