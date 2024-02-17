@@ -10,10 +10,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -22,6 +25,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class AuthConfig {
     @Autowired
     private RepositoryUserDetailsService repositoryUserDetailsService;
+
+    @Autowired
+    private OncePerRequestFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,8 +44,9 @@ public class AuthConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-//                .sessionManagement((session) -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults());
         return http.build();
     }
