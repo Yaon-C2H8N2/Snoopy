@@ -1,0 +1,28 @@
+services:
+  api:
+    build: api
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - db
+      - pdfconverter
+    environment:
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/postgres
+      - JDBC_DATABASE_USERNAME=postgres
+      - JDBC_DATABASE_PASSWORD=postgres
+      - JWT_SECRET=jwtultragigasecretkey
+
+  client:
+    build: client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available/
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - backend
+    depends_on:
+      - api
