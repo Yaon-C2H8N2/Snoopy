@@ -27,7 +27,7 @@ function PrestationRecap() {
             );
     }, [state.idPrestationIntervention, loading]);
 
-    const memorizedDocument = useMemo(() => ({data: document.current}), [document.current]);
+    const memorizedDocument = useMemo(() => ({data: document.current}), []);
 
     return (
         <div>
