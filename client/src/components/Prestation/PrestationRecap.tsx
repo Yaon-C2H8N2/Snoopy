@@ -28,7 +28,19 @@ function PrestationRecap() {
 
     const memorizedDocument = useMemo(() => ({data: pdfDoc.current}), [pdfDoc.current]);
 
-    const onDocumentDownload = () => {
+    const handleMailSend = () => {
+        Network.fetch(`/api/mail`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: state?.idPrestationIntervention,
+        })
+            .then((response) => (response.text()))
+            .then((data) => {
+                console.log(data);
+            })
+    }
+
+    const handleDocumentDownload = () => {
         let filename = 'unnamed.pdf';
 
         Network.fetch(`/api/edition/${state?.idPrestationIntervention}`, {
@@ -73,8 +85,8 @@ function PrestationRecap() {
                     </Card>
                 }
                 <div className={"flex justify-center space-x-5"}>
-                    <Button color={"primary"} variant={"shadow"}>Envoyer au client</Button>
-                    <Button color={"primary"} variant={"shadow"} onClick={onDocumentDownload}>Télécharger</Button>
+                    <Button color={"primary"} variant={"shadow"} onClick={handleMailSend}>Envoyer au client</Button>
+                    <Button color={"primary"} variant={"shadow"} onClick={handleDocumentDownload}>Télécharger</Button>
                 </div>
             </div>
         </div>
