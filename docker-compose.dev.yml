@@ -13,6 +13,11 @@ services:
       - JDBC_DATABASE_USERNAME=postgres
       - JDBC_DATABASE_PASSWORD=postgres
       - JWT_SECRET=jwtultragigasecretkey
+      - MAIL_HOST=smtp.example.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=example
+      - MAIL_PASSWORD=example
+      - MAIL_PROTOCOL=smtp
 
   client:
     build: client
