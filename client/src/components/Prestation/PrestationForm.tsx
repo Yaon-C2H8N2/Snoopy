@@ -43,7 +43,8 @@ function PrestationForm(props: PrestationFormProps) {
             exterieur: formData.get("exterieur") !== null,
             commentaire: formData.get("commentaire"),
             confirmationSignature: !formData.get("confirmation_signature"),
-            signature: canvasRef?.toDataURL() || "",
+            //problem with format (it includes the type of the image, ence the split, which isn't needed here as the api only supports base64)
+            signature: canvasRef?.toDataURL().split(",", 2)[1] || "",
         };
         props.onValidate(prestationIntervention);
     }
