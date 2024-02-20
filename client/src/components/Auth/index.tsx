@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { AuthProvider as Auth, User } from './auth.ts';
+import React, {createContext, useContext, useState, ReactNode} from 'react';
+import {Navigate, useLocation} from 'react-router-dom';
+import {AuthProvider as Auth, User} from './auth.ts';
 import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
 
 interface IAuthContextType {
     user: User | null;
@@ -16,7 +17,7 @@ interface IAuthContextType {
 
 const AuthContext = createContext<IAuthContextType | null>(null);
 
-const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     const [user, setUser] = useState<User | null>(null);
 
     const signin = async (
@@ -26,7 +27,7 @@ const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         callback: VoidFunction
     ) => {
         await Auth.SignIn(username, password, setError, () => {
-            setUser({ username, role: '' });
+            setUser({username, role: ''});
             callback();
         });
     };
@@ -38,7 +39,7 @@ const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         });
     };
 
-    const value = { user, signin, signout };
+    const value = {user, signin, signout};
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -51,16 +52,21 @@ function useAuth() {
     return context;
 }
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({children}: { children: JSX.Element }) {
     const auth = useAuth();
     const location = useLocation();
     const token = Cookies.get("token");
 
+    // redirect to login if not auth or if jwt expired
     if (!auth.user && token === undefined) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{from: location}} replace/>;
+    } else if (token !== undefined) {
+        if ((jwtDecode(token).exp || 0) < Date.now() / 1000) {
+            return <Navigate to="/login" state={{from: location}} replace/>;
+        }
     }
 
     return children;
 }
 
-export { useAuth, RequireAuth, AuthProvider };
+export {useAuth, RequireAuth, AuthProvider};
