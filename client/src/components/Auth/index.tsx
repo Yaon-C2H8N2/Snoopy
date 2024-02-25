@@ -39,6 +39,12 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         });
     };
 
+    const token = Cookies.get("token");
+    if (token !== undefined && user === null) {
+        Auth.isAuthenticated = true;
+        setUser({username: jwtDecode(token)["sub"] || "", role: ''});
+    }
+
     const value = {user, signin, signout};
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
