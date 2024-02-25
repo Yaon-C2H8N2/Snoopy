@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/prestation")
@@ -31,10 +32,10 @@ public class PrestationEndpoint {
     }
 
     @GetMapping("")
-    public String getAllPrestations(HttpServletResponse response){
-        try{
+    public String getAllPrestations(HttpServletResponse response) {
+        try {
             return new ObjectMapper().writeValueAsString(prestationRepository.findAll());
-        } catch (Exception e){
+        } catch (Exception e) {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.setStatus(500);
             return e.getMessage();
@@ -42,7 +43,7 @@ public class PrestationEndpoint {
     }
 
     @GetMapping("/type/prestation")
-    public String getAllTypePrestation(HttpServletResponse response){
+    public String getAllTypePrestation(HttpServletResponse response) {
         try {
             return new ObjectMapper().writeValueAsString(typePrestationRepository.findAll());
         } catch (Exception e) {
@@ -62,6 +63,19 @@ public class PrestationEndpoint {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.setStatus(500);
             return e.getMessage();
+        }
+    }
+
+    @GetMapping("/intervention")
+    public PrestationIntervention[] getAllInterventions(HttpServletResponse response) {
+        try {
+            ArrayList<PrestationIntervention> prestations = new ArrayList<>();
+            prestationInterventionRepository.findAll().forEach(prestations::add);
+            return prestations.toArray(new PrestationIntervention[0]);
+        } catch (Exception e) {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setStatus(500);
+            return null;
         }
     }
 }
