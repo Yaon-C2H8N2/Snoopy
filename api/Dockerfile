@@ -10,11 +10,10 @@ COPY . /app
 
 RUN mvn clean package -P prod -DskipTests
 
-FROM debian:stable-slim as runner
+FROM alpine:latest as runner
 
-RUN apt update && apt install -y \
-    openjdk-17-jre\
-    maven
+RUN apk update && apk add -f \
+    openjdk17-jre
 
 WORKDIR /app
 COPY --from=builder /app /app
