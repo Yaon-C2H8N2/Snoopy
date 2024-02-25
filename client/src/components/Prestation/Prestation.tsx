@@ -71,7 +71,7 @@ function Prestation() {
             .then((data) => {
                 return data;
             });
-        navigate('/recap', {state: {idPrestationIntervention: response.idPrestationIntervention}})
+        navigate('/prestation/recap', {state: {idPrestationIntervention: response.idPrestationIntervention}})
     }
 
     return (
