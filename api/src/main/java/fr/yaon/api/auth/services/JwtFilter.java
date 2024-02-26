@@ -28,17 +28,24 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwtBody = null;
         String username = null;
 
+        // If a bearer token is present in the request then extract the username from it
         if (header != null && header.startsWith("Bearer ")) {
             jwtBody = header.substring(7);
             username = jwtUtil.extractUsername(jwtBody);
         }
 
+        // If the token contains valid informations and the user is not already authenticated
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = repositoryUserDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwtBody, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                // Refresh token if it's about to expire (less than an hour remaining)
+                if (jwtUtil.extractRemainingTime(jwtBody) < 1000 * 60 * 60) {
+                    String token = jwtUtil.generateToken(userDetails);
+                    response.addHeader("Set-Cookie", "token=" + token + "; Path=/;");
+                }
             }
         }
         filterChain.doFilter(request, response);

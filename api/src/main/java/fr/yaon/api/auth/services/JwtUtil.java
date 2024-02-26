@@ -14,6 +14,7 @@ public class JwtUtil {
     private String JWT_SECRET;
 
     public String generateToken(UserDetails utilisateur) {
+        //return token with 10 hours of expiration
         return Jwts.builder()
                 .setSubject(utilisateur.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
@@ -22,6 +23,11 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    // Return the remaining time in milliseconds before the token expires
+    public int extractRemainingTime(String token) {
+        return (int) (Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody().getExpiration().getTime() - System.currentTimeMillis());
     }
 
     public boolean validateToken(String token, UserDetails utilisateur) {
