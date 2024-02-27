@@ -34,17 +34,20 @@ function PrestationForm(props: PrestationFormProps) {
         event.preventDefault();
         const formData = new FormData(event.target as HTMLFormElement);
         const prestationIntervention = {
-            idPrestation: formData.get("idPrestation"),
-            idClient: formData.get("idClient"),
-            datePrestation: "",
-            heureDebut: formData.get("heureDebut"),
-            heureFin: formData.get("heureFin"),
-            interieur: formData.get("interieur") !== null,
-            exterieur: formData.get("exterieur") !== null,
-            commentaire: formData.get("commentaire"),
-            confirmationSignature: !formData.get("confirmation_signature"),
-            //problem with format (it includes the type of the image, ence the split, which isn't needed here as the api only supports base64)
-            signature: canvasRef?.toDataURL().split(",", 2)[1] || "",
+            prestationIntervention: {
+                idPrestation: formData.get("idPrestation"),
+                idClient: formData.get("idClient"),
+                datePrestation: "",
+                heureDebut: formData.get("heureDebut"),
+                heureFin: formData.get("heureFin"),
+                interieur: formData.get("interieur") !== null,
+                exterieur: formData.get("exterieur") !== null,
+                commentaire: formData.get("commentaire"),
+                confirmationSignature: !(formData.get("confirmation_signature") === ""),
+                //problem with format (it includes the type of the image, ence the split, which isn't needed here as the api only supports base64)
+                signature: !(formData.get("confirmation_signature") === "") ? canvasRef?.toDataURL().split(",", 2)[1] || "" : null,
+            },
+            idEmployes: selectedIntervenants.map((intervenant) => intervenant.idEmploye)
         };
         props.onValidate(prestationIntervention);
     }

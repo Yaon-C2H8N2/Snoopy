@@ -77,7 +77,7 @@ const PrestationList = () => {
                                         <TableCell className={"text-center"}>{prestation.heureDebut}</TableCell>
                                         <TableCell className={"text-center"}>{prestation.heureFin}</TableCell>
                                         <TableCell
-                                            className={"text-center"}>{prestation.interieur && prestation.exterieur ? "Intérieur et extérieur" : prestation.interieur ? "Intérieur" : prestation.interieur ? "Extérieur" : "Non renseigné"}</TableCell>
+                                            className={"text-center"}>{prestation.interieur && prestation.exterieur ? "Intérieur et extérieur" : prestation.interieur ? "Intérieur" : prestation.exterieur ? "Extérieur" : "Non renseigné"}</TableCell>
                                         <TableCell>
                                             <Button
                                                 className={"w-full"}
