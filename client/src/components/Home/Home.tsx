@@ -8,11 +8,11 @@ const Home = () => {
     const navigate = useNavigate();
 
     return (
-        <div className={"flex flex-wrap justify-center items-center"}>
-            <div className={"flex flex-col"}>
-                <img src={"/vite.svg"} alt={"logo"} style={{width: 350}}/>
+        <div className={"flex flex-wrap justify-center items-center min-h-[100vh]"}>
+            <div className={"flex flex-col min-w-[25%] items-center"}>
+                <img src={"/Snoopy.svg"} alt={"logo"} style={{width: 350}}/>
             </div>
-            <div className={"flex flex-col"}>
+            <div className={"flex flex-col space-y-3 min-w-[25%] items-center"}>
                 {auth.user === null
                     ? (
                         <React.Fragment>

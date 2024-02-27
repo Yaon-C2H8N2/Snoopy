@@ -53,8 +53,8 @@ const PrestationList = () => {
     const columns: string[] = ['Nº', 'Client', 'Date', 'Heure début', 'Heure fin', 'Intérieur/Extérieur', 'Action'];
 
     return (
-        <div className={"flex flex-wrap justify-center"}>
-            <div className={"flex flex-col space-y-5 w-4/6 mt-6"}>
+        <div className={"flex flex-wrap justify-center items-center min-h-[100vh]"}>
+            <div className={"flex flex-col space-y-5 w-4/6"}>
                 <h1 className={"text-3xl text-center"}>Historique des prestations</h1>
                 <Card className={"max-h-[80vh] overflow-auto"}>
                     <Table>
