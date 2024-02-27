@@ -19,7 +19,7 @@ public interface EmployeRepository extends Repository<Employe, Integer> {
     Employe save(Employe employe);
 
     @Query("""
-        INSERT INTO employe_prestation_intervention(id_employe, id_prestation_intervention) 
+        INSERT INTO employe_prestation_intervention(id_employe, id_prestation_intervention)
         SELECT id_employe, :idPrestationIntervention FROM employe
         WHERE id_employe IN (:idEmployes)
         RETURNING employe_prestation_intervention.id_employe_prestation_intervention

@@ -1,13 +1,13 @@
 package fr.yaon.api.web.services;
 
-import com.fasterxml.jackson.core.JsonFactoryBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fr.yaon.api.repositories.EmployeRepository;
 import fr.yaon.api.repositories.PrestationInterventionRepository;
 import fr.yaon.api.repositories.PrestationRepository;
 import fr.yaon.api.repositories.TypePrestationRepository;
 import fr.yaon.api.web.models.PrestationIntervention;
+import fr.yaon.api.web.models.PrestationInterventionSync;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,6 +27,9 @@ public class PrestationEndpoint {
 
     @Autowired
     TypePrestationRepository typePrestationRepository;
+
+    @Autowired
+    EmployeRepository employeRepository;
 
     public PrestationEndpoint() {
     }
@@ -54,12 +57,15 @@ public class PrestationEndpoint {
     }
 
     @PutMapping("/save")
-    public String savePrestation(@RequestBody PrestationIntervention prestationIntervention, HttpServletResponse response) {
+    public String savePrestation(@RequestBody PrestationInterventionSync prestationInterventionSync, HttpServletResponse response) {
         try {
+            PrestationIntervention prestationIntervention = prestationInterventionSync.getPrestationIntervention();
             prestationIntervention.setDatePrestation(new Date(System.currentTimeMillis()));
             prestationInterventionRepository.save(prestationIntervention);
+            if(!prestationInterventionSync.getIdEmployes().isEmpty())employeRepository.addToPrestationIntervention(prestationIntervention.getIdPrestationIntervention(), prestationInterventionSync.getIdEmployes());
             return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(prestationIntervention);
         } catch (Exception e) {
+            e.printStackTrace();
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.setStatus(500);
             return e.getMessage();
