@@ -1,5 +1,10 @@
 # Snoopy
 
+# ⚠️ PASSWORDS ARE CURRENTLY STORED AS PLAIN TEXT ⚠️
+
+For testing purposes, users need to be manually inserted in the database and passwords needed to be inserted without hashing.
+Therefore this version isn't suitable for production environment.
+
 ## Introduction
 
 Snoopy is a simple webapp that aims to help you send invoices to clients.
