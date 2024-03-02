@@ -30,7 +30,7 @@ const Home = () => {
                             <h1 className={"text-3xl"}>Bienvenue {auth.user.username}</h1>
                             <Button color={"primary"}
                                     variant={"bordered"}
-                                    onClick={() => navigate("/logout")}
+                                    onClick={() => auth.signout(() => navigate("/"))}
                             >
                                 Se déconnecter
                             </Button>

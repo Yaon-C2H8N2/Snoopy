@@ -35,6 +35,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     const signout = (callback: VoidFunction) => {
         Auth.SignOut(() => {
             setUser(null);
+            Cookies.remove("token");
             callback();
         });
     };
