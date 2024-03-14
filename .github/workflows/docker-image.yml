@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v3
       - name: Building the API Docker image
         run: |
           if [ "${{ inputs.scope }}" = "BETA" ]; then
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v3
       - name: Building the client Docker image
         run: |
           if [ "${{ inputs.scope }}" = "BETA" ]; then
