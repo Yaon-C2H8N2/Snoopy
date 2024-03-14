@@ -6,6 +6,7 @@ import fr.yaon.api.auth.repositories.UtilisateurRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public class AdminEndpoint {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public AdminEndpoint() {
     }
 
@@ -31,6 +35,37 @@ public class AdminEndpoint {
                 utilisateur.setPassword(null);
             }
             return this.objectMapper.writeValueAsString(utilisateurs);
+        } catch (Exception e) {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setStatus(500);
+            return e.getMessage();
+        }
+    }
+
+    @PutMapping("/utilisateur")
+    public String addUtilisateur(HttpServletResponse response, @RequestBody Utilisateur utilisateur) {
+        try {
+            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
+            Utilisateur newUser = utilisateurRepository.save(utilisateur);
+            newUser.setPassword(null);
+            return this.objectMapper.writeValueAsString(newUser);
+        } catch (Exception e) {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setStatus(500);
+            return e.getMessage();
+        }
+    }
+
+    @DeleteMapping("/utilisateur/{idUtilisateur}")
+    public String deleteUtilisateur(HttpServletResponse response, @PathVariable int idUtilisateur) {
+        try {
+            Utilisateur utilisateur = utilisateurRepository.findByIdUtilisateur(idUtilisateur);
+            if (utilisateur != null) {
+                if (utilisateur.getRole().equals("ADMIN")) {
+                    throw new Exception("Cannot delete admin");
+                }
+                return objectMapper.writeValueAsString(this.utilisateurRepository.deleteUtilisateurByIdUtilisateur(idUtilisateur));
+            } else throw new Exception("Utilisateur not found");
         } catch (Exception e) {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.setStatus(500);

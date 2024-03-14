@@ -9,13 +9,13 @@ import java.util.Collection;
 
 public class Utilisateur implements UserDetails {
     @Id
-    int id_utilisateur;
+    int idUtilisateur;
     String username;
     String password;
     String role;
 
-    public void setId_utilisateur(int id_utilisateur) {
-        this.id_utilisateur = id_utilisateur;
+    public void setIdUtilisateur(int idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
     }
 
     public void setUsername(String username) {
@@ -30,8 +30,8 @@ public class Utilisateur implements UserDetails {
         this.role = role;
     }
 
-    public int getId_utilisateur() {
-        return id_utilisateur;
+    public int getIdUtilisateur() {
+        return idUtilisateur;
     }
 
     public String getRole() {
