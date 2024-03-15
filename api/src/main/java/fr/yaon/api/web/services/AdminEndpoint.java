@@ -112,6 +112,20 @@ public class AdminEndpoint {
         }
     }
 
+    @DeleteMapping("/prestation/{idPrestation}")
+    public String deletePrestation(HttpServletResponse response, @PathVariable int idPrestation) {
+        try {
+            Prestation prestation = prestationRepository.deletePrestationByIdPrestation(idPrestation);
+            if (prestation != null) {
+                return objectMapper.writeValueAsString(prestation);
+            } else throw new Exception("Prestation not found");
+        } catch (Exception e) {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setStatus(500);
+            return e.getMessage();
+        }
+    }
+
     @PutMapping("/client")
     public String addClient(HttpServletResponse response, @RequestBody Client client) {
         try {
