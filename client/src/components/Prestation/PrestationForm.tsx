@@ -18,6 +18,7 @@ function PrestationForm(props: PrestationFormProps) {
         idEmploye: number
     }>);
     const [selectedIntervenantId, setSelectedIntervenantId] = useState<number>();
+    const [selectedTypePrestation, setSelectedTypePrestation] = useState<number>();
 
     let canvasRef: SignatureCanvas | null;
 
@@ -61,6 +62,7 @@ function PrestationForm(props: PrestationFormProps) {
                         id={"typePrestation"}
                         label="Sélectionnez un type de prestation"
                         name={"typePrestation"}
+                        onChange={(event) => setSelectedTypePrestation(Number(event.target.value))}
                     >
                         {props.typePrestations.map((typePrestation) => (
                             <SelectItem key={typePrestation.idTypePrestation}
@@ -111,9 +113,12 @@ function PrestationForm(props: PrestationFormProps) {
                         <Select
                             label="Sélectionnez une prestation"
                             name={"idPrestation"}
+                            isDisabled={selectedTypePrestation === undefined}
                             isRequired={true}
                         >
-                            {props.prestations.map((prestation) => (
+                            {props.prestations
+                                .filter((prestation) => (prestation.idTypePrestation === selectedTypePrestation))
+                                .map((prestation) => (
                                 <SelectItem key={prestation.idPrestation} value={prestation.idPrestation}>
                                     {prestation.nomPrestation}
                                 </SelectItem>
