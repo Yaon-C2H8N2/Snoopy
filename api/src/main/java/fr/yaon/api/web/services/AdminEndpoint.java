@@ -100,6 +100,20 @@ public class AdminEndpoint {
         }
     }
 
+    @DeleteMapping("/typeprestation/{idTypePrestation}")
+    public String deleteTypePrestation(HttpServletResponse response, @PathVariable int idTypePrestation) {
+        try {
+            TypePrestation typePrestation = typePrestationRepository.deleteTypePrestationByIdTypePrestation(idTypePrestation);
+            if (typePrestation != null) {
+                return objectMapper.writeValueAsString(typePrestation);
+            } else throw new Exception("TypePrestation not found");
+        } catch (Exception e) {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setStatus(500);
+            return e.getMessage();
+        }
+    }
+
     @PutMapping("/prestation")
     public String addPrestation(HttpServletResponse response, @RequestBody Prestation prestation) {
         try {
