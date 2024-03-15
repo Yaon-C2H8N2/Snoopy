@@ -101,7 +101,7 @@ public class AdminEndpoint {
     }
 
     @PutMapping("/prestation")
-    public String addTypePrestation(HttpServletResponse response, @RequestBody Prestation prestation) {
+    public String addPrestation(HttpServletResponse response, @RequestBody Prestation prestation) {
         try {
             prestationRepository.save(prestation);
             return objectMapper.writeValueAsString(prestation);
@@ -113,7 +113,7 @@ public class AdminEndpoint {
     }
 
     @PutMapping("/client")
-    public String addTypePrestation(HttpServletResponse response, @RequestBody Client client) {
+    public String addClient(HttpServletResponse response, @RequestBody Client client) {
         try {
             clientRepository.save(client);
             return objectMapper.writeValueAsString(client);
