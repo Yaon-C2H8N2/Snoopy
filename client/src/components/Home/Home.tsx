@@ -34,6 +34,14 @@ const Home = () => {
                             >
                                 Se déconnecter
                             </Button>
+                            {auth.user.role === "ADMIN" && (
+                                <Button color={"primary"}
+                                        variant={"shadow"}
+                                        onClick={() => navigate("/admin")}
+                                >
+                                    Administration
+                                </Button>
+                            )}
                         </React.Fragment>
                     )}
                 <Button color={"primary"}

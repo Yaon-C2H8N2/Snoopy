@@ -15,6 +15,12 @@ interface IAuthContextType {
     signout: (callback: VoidFunction) => void;
 }
 
+interface DecodedToken {
+    username: string;
+    role: string;
+    exp: number;
+}
+
 const AuthContext = createContext<IAuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
@@ -27,7 +33,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         callback: VoidFunction
     ) => {
         await Auth.SignIn(username, password, setError, () => {
-            setUser({username, role: ''});
+            authWithToken();
             callback();
         });
     };
@@ -40,11 +46,18 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         });
     };
 
-    const token = Cookies.get("token");
-    if (token !== undefined && user === null) {
-        Auth.isAuthenticated = true;
-        setUser({username: jwtDecode(token)["sub"] || "", role: ''});
+    const authWithToken = () => {
+        const token = Cookies.get("token")
+        if (token !== undefined && user === null) {
+            Auth.isAuthenticated = true;
+            setUser({
+                username: jwtDecode<DecodedToken>(token)["username"] || "",
+                role: jwtDecode<DecodedToken>(token)["role"] || "USER"
+            });
+        }
     }
+
+    authWithToken();
 
     const value = {user, signin, signout};
 
@@ -76,4 +89,21 @@ function RequireAuth({children}: { children: JSX.Element }) {
     return children;
 }
 
-export {useAuth, RequireAuth, AuthProvider};
+function RequireAdmin({children}: { children: JSX.Element }) {
+    const auth = useAuth();
+    const location = useLocation();
+    const token = Cookies.get("token");
+
+    // redirect to home if not admin or if jwt expired
+    if (!auth.user && token === undefined) {
+        return <Navigate to="/" state={{from: location}} replace/>;
+    } else if (token !== undefined) {
+        if (jwtDecode<DecodedToken>(token)["role"] !== "ADMIN" || (jwtDecode<DecodedToken>(token).exp || 0) < Date.now() / 1000) {
+            return <Navigate to="/" state={{from: location}} replace/>;
+        }
+    }
+
+    return children;
+}
+
+export {useAuth, RequireAuth, RequireAdmin, AuthProvider};
