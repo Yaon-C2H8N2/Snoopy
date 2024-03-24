@@ -1,9 +1,9 @@
 import React from "react";
-import {Button, ButtonGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
+import {getKeyValue, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 
 type AdminListProps = {
     content: object[],
-    columns: string[],
+    columns: { key: string, label: string }[],
     onDelete?: () => void,
     onEdit?: () => void,
     onAdd?: () => void,
@@ -13,27 +13,18 @@ function AdminList(props: AdminListProps) {
 
     return (
         <React.Fragment>
-            <Table>
-                <TableHeader>
-                    {props.columns.map((column) => (
-                        <TableColumn key={"header-" + column}>{column}</TableColumn>
-                    ))}
-                    <TableColumn className={"w-[10%]"}></TableColumn>
+            <Table aria-label={"Admin table"}>
+                <TableHeader columns={props.columns}>
+                    {(column) => (<TableColumn key={column.key}>{column.label}</TableColumn>)}
                 </TableHeader>
-                <TableBody>
-                    {props.content.map((line, index) => (
-                        <TableRow key={"line-" + index}>
-                            {props.columns.map((column) => (
-                                <TableCell key={"line-" + index + "-" + column}>{line[column]}</TableCell>
-                            ))}
-                            <TableCell className={"w-[10%]"}>
-                                <ButtonGroup>
-                                    <Button size={"sm"}>E</Button>
-                                    <Button size={"sm"}>S</Button>
-                                </ButtonGroup>
-                            </TableCell>
+                <TableBody items={props.content}>
+                    {(item) => (
+                        <TableRow>
+                            {(column) => (
+                                <TableCell>{getKeyValue(item, column)}</TableCell>
+                            )}
                         </TableRow>
-                    ))}
+                    )}
                 </TableBody>
             </Table>
         </React.Fragment>

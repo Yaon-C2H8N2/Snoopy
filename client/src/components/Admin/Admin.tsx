@@ -15,6 +15,8 @@ function Admin() {
         })
             .then((response) => (response.json()))
             .then((data) => {
+                //@ts-expect-error key nécessaire pour la table de NextUI
+                data.forEach((elem: object, index: number) => (elem.key = index))
                 setUtilisateurs(data);
             });
         Network.fetch("/api/prestation", {
@@ -22,6 +24,8 @@ function Admin() {
         })
             .then((response) => (response.json()))
             .then((data) => {
+                //@ts-expect-error key nécessaire pour la table de NextUI
+                data.forEach((elem: object, index: number) => (elem.key = index))
                 setPrestations(data);
             });
         Network.fetch("/api/prestation/type/prestation", {
@@ -29,6 +33,8 @@ function Admin() {
         })
             .then((response) => (response.json()))
             .then((data) => {
+                //@ts-expect-error key nécessaire pour la table de NextUI
+                data.forEach((elem: object, index: number) => (elem.key = index))
                 setTypePrestations(data);
             });
         Network.fetch("/api/client", {
@@ -36,6 +42,8 @@ function Admin() {
         })
             .then((response) => (response.json()))
             .then((data) => {
+                //@ts-expect-error key nécessaire pour la table de NextUI
+                data.forEach((elem: object, index: number) => (elem.key = index))
                 setClients(data);
             });
     }, []);
@@ -50,7 +58,11 @@ function Admin() {
                             <Card>
                                 <AdminList
                                     content={utilisateurs}
-                                    columns={["idUtilisateur", "username", "role"]}
+                                    columns={[
+                                        {key: "idUtilisateur", label: "Id utilisateur"},
+                                        {key: "username", label: "Nom d'utilisateur"},
+                                        {key: "role", label: "Rôle"}
+                                    ]}
                                 />
                             </Card>
                         </Tab>
@@ -58,7 +70,10 @@ function Admin() {
                             <Card>
                                 <AdminList
                                     content={typePrestations}
-                                    columns={["idTypePrestation", "nomTypePrestation"]}
+                                    columns={[
+                                        {key: "idTypePrestation", label: "Id type prestation"},
+                                        {key: "nomTypePrestation", label: "Nom type prestation"}
+                                    ]}
                                 />
                             </Card>
                         </Tab>
@@ -66,7 +81,11 @@ function Admin() {
                             <Card>
                                 <AdminList
                                     content={prestations}
-                                    columns={["idPrestation", "idTypePrestation", "nomPrestation"]}
+                                    columns={[
+                                        {key: "idPrestation", label: "Id type prestation"},
+                                        {key: "idTypePrestation", label: "Nom type prestation"},
+                                        {key: "nomPrestation", label: "Nom prestation"}
+                                    ]}
                                 />
                             </Card>
                         </Tab>
@@ -74,7 +93,12 @@ function Admin() {
                             <Card>
                                 <AdminList
                                     content={clients}
-                                    columns={["idClient", "nomEntreprise", "adresse", "adresseMail"]}
+                                    columns={[
+                                        {key: "idClient", label: "Id client"},
+                                        {key: "nomEntreprise", label: "Nom entreprise"},
+                                        {key: "adresse", label: "Adresse"},
+                                        {key: "adresseMail", label: "Adresse mail"}
+                                    ]}
                                 />
                             </Card>
                         </Tab>
