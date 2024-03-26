@@ -12,7 +12,7 @@ function DeleteDialog(props: DeleteDialogProps) {
     const tableColumns = props.elem
         ? Object.keys(props.elem)
             .map((key) => ({key: key, label: key}))
-            .filter((column) => column.key !== "key")
+            .filter((column) => column.key !== "key" && column.key !== "type")
         : [];
 
     return (

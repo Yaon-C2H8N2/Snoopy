@@ -22,7 +22,8 @@ function Admin() {
                     idUtilisateur: elem.idUtilisateur,
                     username: elem.username,
                     role: elem.role,
-                    key: index
+                    key: index,
+                    type: "utilisateur"
                 }));
                 setUtilisateurs(filteredData);
             });
@@ -32,7 +33,7 @@ function Admin() {
             .then((response) => (response.json()))
             .then((data) => {
                 //@ts-expect-error key nécessaire pour la table de NextUI
-                data.forEach((elem: object, index: number) => (elem.key = index))
+                data.forEach((elem: object, index: number) => {elem.key = index; elem.type = "prestation"})
                 setPrestations(data);
             });
         Network.fetch("/api/prestation/type/prestation", {
@@ -41,7 +42,7 @@ function Admin() {
             .then((response) => (response.json()))
             .then((data) => {
                 //@ts-expect-error key nécessaire pour la table de NextUI
-                data.forEach((elem: object, index: number) => (elem.key = index))
+                data.forEach((elem: object, index: number) => {elem.key = index; elem.type = "typePrestation"})
                 setTypePrestations(data);
             });
         Network.fetch("/api/client", {
@@ -50,7 +51,7 @@ function Admin() {
             .then((response) => (response.json()))
             .then((data) => {
                 //@ts-expect-error key nécessaire pour la table de NextUI
-                data.forEach((elem: object, index: number) => (elem.key = index))
+                data.forEach((elem: object, index: number) => {elem.key = index; elem.type = "client"})
                 setClients(data);
             });
     }, []);
@@ -61,7 +62,42 @@ function Admin() {
     }
 
     function handleDelete(elem: object | undefined) {
-        console.log("delete", elem);
+        //@ts-expect-error type nécessaire pour la suppression depuis le formulaire dynamique
+        switch (elem?.type){
+            case "utilisateur":
+                Network.fetch("/api/admin/utilisateur/"+(elem as {idUtilisateur: string}).idUtilisateur, {
+                    method: "DELETE",
+                })
+                    .then((response) => (response.json()))
+                    .then(() => {
+                        //@ts-expect-error type nécessaire pour la suppression depuis le formulaire dynamique
+                        setUtilisateurs(utilisateurs.filter((user) => (user.idUtilisateur !== elem.idUtilisateur)))
+                    });
+                break;
+            case "prestation":
+                Network.fetch("/api/admin/prestation/"+(elem as {idPrestation: string}).idPrestation, {
+                    method: "DELETE",
+                })
+                    .then((response) => (response.json()))
+                    .then(() => {
+                        //@ts-expect-error type nécessaire pour la suppression depuis le formulaire dynamique
+                        setPrestations(prestations.filter((prestation) => (prestation.idPrestation !== elem.idPrestation)))
+                    });
+                break;
+            case "typePrestation":
+                Network.fetch("/api/admin/typeprestation/"+(elem as {idTypePrestation: string}).idTypePrestation, {
+                    method: "DELETE",
+                })
+                    .then((response) => (response.json()))
+                    .then(() => {
+                        //@ts-expect-error type nécessaire pour la suppression depuis le formulaire dynamique
+                        setTypePrestations(typePrestations.filter((typePrestation) => (typePrestation.idTypePrestation !== elem.idTypePrestation)))
+                    });
+                break;
+            case "client":
+                console.log("Suppression d'un client", elem);
+                break;
+        }
         setDeleteOpenModal(false);
     }
 
