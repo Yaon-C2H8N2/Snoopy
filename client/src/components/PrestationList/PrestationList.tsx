@@ -57,7 +57,7 @@ const PrestationList = () => {
             <div className={"flex flex-col space-y-5 w-4/6"}>
                 <h1 className={"text-3xl text-center"}>Historique des prestations</h1>
                 <Card className={"max-h-[80vh] overflow-auto"}>
-                    <Table>
+                    <Table aria-label={"Table des interventions"}>
                         <TableHeader>
                             {columns.map((column) => {
                                 return (

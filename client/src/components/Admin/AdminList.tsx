@@ -1,11 +1,22 @@
 import React from "react";
-import {getKeyValue, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
+import {
+    Button,
+    ButtonGroup,
+    getKeyValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow
+} from "@nextui-org/react";
+import {PencilIcon, TrashIcon} from "lucide-react";
 
 type AdminListProps = {
     content: object[],
     columns: { key: string, label: string }[],
-    onDelete?: () => void,
-    onEdit?: () => void,
+    onDelete?: (elem: object) => void,
+    onEdit?: (elem: object) => void,
     onAdd?: () => void,
 }
 
@@ -19,9 +30,26 @@ function AdminList(props: AdminListProps) {
                 </TableHeader>
                 <TableBody items={props.content}>
                     {(item) => (
-                        <TableRow>
+                        <TableRow className={"group"}>
                             {(column) => (
-                                <TableCell>{getKeyValue(item, column)}</TableCell>
+                                column !== "action"
+                                    ? (<TableCell>{getKeyValue(item, column)}</TableCell>)
+                                    : (
+                                        <TableCell className={"opacity-0 w-[1%] group-hover:opacity-100"}>
+                                            <ButtonGroup>
+                                                <Button isIconOnly={true}
+                                                        onClick={() => (props.onEdit && props.onEdit(item))}
+                                                        color={"primary"}>
+                                                    <PencilIcon size={15}/>
+                                                </Button>
+                                                <Button isIconOnly={true}
+                                                        onClick={() => (props.onDelete && props.onDelete(item))}
+                                                        color={"danger"}>
+                                                    <TrashIcon size={15}/>
+                                                </Button>
+                                            </ButtonGroup>
+                                        </TableCell>
+                                    )
                             )}
                         </TableRow>
                     )}
