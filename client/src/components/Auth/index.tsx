@@ -1,109 +1,112 @@
-import React, {createContext, useContext, useState, ReactNode} from 'react';
-import {Navigate, useLocation} from 'react-router-dom';
-import {AuthProvider as Auth, User} from './auth.ts';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { AuthProvider as Auth, User } from "./auth.ts";
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 interface IAuthContextType {
-    user: User | null;
-    signin: (
-        username: string,
-        password: string,
-        setError: (error: string) => void,
-        callback: VoidFunction
-    ) => void;
-    signout: (callback: VoidFunction) => void;
+  user: User | null;
+  signin: (
+    username: string,
+    password: string,
+    setError: (error: string) => void,
+    callback: VoidFunction,
+  ) => void;
+  signout: (callback: VoidFunction) => void;
 }
 
 interface DecodedToken {
-    username: string;
-    role: string;
-    exp: number;
+  username: string;
+  role: string;
+  exp: number;
 }
 
 const AuthContext = createContext<IAuthContextType | null>(null);
 
-const AuthProvider: React.FC<{ children: ReactNode }> = ({children}) => {
-    const [user, setUser] = useState<User | null>(null);
+const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-    const signin = async (
-        username: string,
-        password: string,
-        setError: (error: string) => void,
-        callback: VoidFunction
-    ) => {
-        await Auth.SignIn(username, password, setError, () => {
-            authWithToken();
-            callback();
-        });
-    };
+  const signin = async (
+    username: string,
+    password: string,
+    setError: (error: string) => void,
+    callback: VoidFunction,
+  ) => {
+    await Auth.SignIn(username, password, setError, () => {
+      authWithToken();
+      callback();
+    });
+  };
 
-    const signout = (callback: VoidFunction) => {
-        Auth.SignOut(() => {
-            setUser(null);
-            Cookies.remove("token");
-            callback();
-        });
-    };
+  const signout = (callback: VoidFunction) => {
+    Auth.SignOut(() => {
+      setUser(null);
+      Cookies.remove("token");
+      callback();
+    });
+  };
 
-    const authWithToken = () => {
-        const token = Cookies.get("token")
-        if (token !== undefined && user === null) {
-            Auth.isAuthenticated = true;
-            setUser({
-                username: jwtDecode<DecodedToken>(token)["username"] || "",
-                role: jwtDecode<DecodedToken>(token)["role"] || "USER"
-            });
-        }
+  const authWithToken = () => {
+    const token = Cookies.get("token");
+    if (token !== undefined && user === null) {
+      Auth.isAuthenticated = true;
+      setUser({
+        username: jwtDecode<DecodedToken>(token)["username"] || "",
+        role: jwtDecode<DecodedToken>(token)["role"] || "USER",
+      });
     }
+  };
 
-    authWithToken();
+  authWithToken();
 
-    const value = {user, signin, signout};
+  const value = { user, signin, signout };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
 
-function RequireAuth({children}: { children: JSX.Element }) {
-    const auth = useAuth();
-    const location = useLocation();
-    const token = Cookies.get("token");
+function RequireAuth({ children }: { children: JSX.Element }) {
+  const auth = useAuth();
+  const location = useLocation();
+  const token = Cookies.get("token");
 
-    // redirect to login if not auth or if jwt expired
-    if (!auth.user && token === undefined) {
-        return <Navigate to="/login" state={{from: location}} replace/>;
-    } else if (token !== undefined) {
-        if ((jwtDecode(token).exp || 0) < Date.now() / 1000) {
-            return <Navigate to="/login" state={{from: location}} replace/>;
-        }
+  // redirect to login if not auth or if jwt expired
+  if (!auth.user && token === undefined) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  } else if (token !== undefined) {
+    if ((jwtDecode(token).exp || 0) < Date.now() / 1000) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
     }
+  }
 
-    return children;
+  return children;
 }
 
-function RequireAdmin({children}: { children: JSX.Element }) {
-    const auth = useAuth();
-    const location = useLocation();
-    const token = Cookies.get("token");
+function RequireAdmin({ children }: { children: JSX.Element }) {
+  const auth = useAuth();
+  const location = useLocation();
+  const token = Cookies.get("token");
 
-    // redirect to home if not admin or if jwt expired
-    if (!auth.user && token === undefined) {
-        return <Navigate to="/" state={{from: location}} replace/>;
-    } else if (token !== undefined) {
-        if (jwtDecode<DecodedToken>(token)["role"] !== "ADMIN" || (jwtDecode<DecodedToken>(token).exp || 0) < Date.now() / 1000) {
-            return <Navigate to="/" state={{from: location}} replace/>;
-        }
+  // redirect to home if not admin or if jwt expired
+  if (!auth.user && token === undefined) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  } else if (token !== undefined) {
+    if (
+      jwtDecode<DecodedToken>(token)["role"] !== "ADMIN" ||
+      (jwtDecode<DecodedToken>(token).exp || 0) < Date.now() / 1000
+    ) {
+      return <Navigate to="/" state={{ from: location }} replace />;
     }
+  }
 
-    return children;
+  return children;
 }
 
-export {useAuth, RequireAuth, RequireAdmin, AuthProvider};
+export { useAuth, RequireAuth, RequireAdmin, AuthProvider };
