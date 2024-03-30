@@ -84,6 +84,8 @@ jobs:
           if [ "${{ inputs.scope }}" = "BETA" ]; then
             docker load -i snoopy-client-${{ inputs.image_version }}.tar
             docker load -i snoopy-client-latest-beta.tar
+            docker load -i snoopy-api-${{ inputs.image_version }}.tar
+            docker load -i snoopy-api-latest-beta.tar
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest-beta
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta
@@ -91,6 +93,8 @@ jobs:
           else
             docker load -i snoopy-client-${{ inputs.image_version }}.tar
             docker load -i snoopy-client-latest.tar
+            docker load -i snoopy-api-${{ inputs.image_version }}.tar
+            docker load -i snoopy-api-latest.tar
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
