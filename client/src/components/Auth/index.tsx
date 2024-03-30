@@ -48,7 +48,11 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const authWithToken = () => {
     const token = Cookies.get("token");
-    if (token !== undefined && user === null) {
+    if (
+      token !== undefined &&
+      user === null &&
+      (jwtDecode<DecodedToken>(token).exp || 0) > Date.now() / 1000
+    ) {
       Auth.isAuthenticated = true;
       setUser({
         username: jwtDecode<DecodedToken>(token)["username"] || "",
@@ -98,11 +102,10 @@ function RequireAdmin({ children }: { children: JSX.Element }) {
   if (!auth.user && token === undefined) {
     return <Navigate to="/" state={{ from: location }} replace />;
   } else if (token !== undefined) {
-    if (
-      jwtDecode<DecodedToken>(token)["role"] !== "ADMIN" ||
-      (jwtDecode<DecodedToken>(token).exp || 0) < Date.now() / 1000
-    ) {
+    if (jwtDecode<DecodedToken>(token)["role"] !== "ADMIN") {
       return <Navigate to="/" state={{ from: location }} replace />;
+    } else if ((jwtDecode<DecodedToken>(token).exp || 0) < Date.now() / 1000) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
     }
   }
 
