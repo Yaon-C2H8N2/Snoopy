@@ -1,5 +1,5 @@
 function TypePrestationAddForm() {
-  return <div>test ajout type prestation</div>;
+    return <div>test ajout type prestation</div>;
 }
 
 export default TypePrestationAddForm;

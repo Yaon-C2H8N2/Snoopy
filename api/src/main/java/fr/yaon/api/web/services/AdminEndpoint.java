@@ -58,10 +58,11 @@ public class AdminEndpoint {
     }
 
     @PutMapping("/utilisateur")
-    public String addUtilisateur(HttpServletResponse response, @RequestBody Utilisateur utilisateur) {
+    public String addUtilisateur(HttpServletResponse response, @RequestBody String utilisateur) {
         try {
-            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-            Utilisateur newUser = utilisateurRepository.save(utilisateur);
+            Utilisateur userToAdd = this.objectMapper.readValue(utilisateur, Utilisateur.class);
+            userToAdd.setPassword(passwordEncoder.encode(userToAdd.getPassword()));
+            Utilisateur newUser = utilisateurRepository.save(userToAdd);
             newUser.setPassword(null);
             return this.objectMapper.writeValueAsString(newUser);
         } catch (Exception e) {

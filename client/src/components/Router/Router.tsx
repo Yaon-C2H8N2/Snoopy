@@ -10,38 +10,38 @@ import PrestationList from "../PrestationList/PrestationList.tsx";
 import Admin from "../Admin/Admin.tsx";
 
 const Router = () => {
-  return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <Layout />
-            </RequireAdmin>
-          }
-        >
-          <Route path="" element={<Admin />} />
-        </Route>
-        <Route
-          path="/prestation"
-          element={
-            <RequireAuth>
-              <Layout />
-            </RequireAuth>
-          }
-        >
-          <Route path="" element={<Prestation />} />
-          <Route path="recap" element={<PrestationRecap />} />
-          <Route path="list" element={<PrestationList />} />
-        </Route>
+    return (
+        <AuthProvider>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Home />} />
+                <Route
+                    path="/admin"
+                    element={
+                        <RequireAdmin>
+                            <Layout />
+                        </RequireAdmin>
+                    }
+                >
+                    <Route path="" element={<Admin />} />
+                </Route>
+                <Route
+                    path="/prestation"
+                    element={
+                        <RequireAuth>
+                            <Layout />
+                        </RequireAuth>
+                    }
+                >
+                    <Route path="" element={<Prestation />} />
+                    <Route path="recap" element={<PrestationRecap />} />
+                    <Route path="list" element={<PrestationList />} />
+                </Route>
 
-        <Route path="*" element={<NoMatch />} />
-      </Routes>
-    </AuthProvider>
-  );
+                <Route path="*" element={<NoMatch />} />
+            </Routes>
+        </AuthProvider>
+    );
 };
 
 export default Router;
