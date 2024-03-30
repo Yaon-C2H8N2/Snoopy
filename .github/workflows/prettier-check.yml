@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
+        working-directory: client
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
       - run: npm ci
       - name: Test prettier
-        run: |
-          | cd client
-          npx prettier ./client --check
+        working-directory: client
+        run: npx prettier . --check
