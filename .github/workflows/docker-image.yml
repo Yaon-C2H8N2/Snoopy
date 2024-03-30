@@ -28,16 +28,6 @@ jobs:
           else
             docker build ./api/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
           fi
-      - name: Push the Docker images to the ghcr.io registry
-        run: |
-          docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GITHUB_TOKEN }}
-          if [ "${{ inputs.scope }}" = "BETA" ]; then
-            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta
-            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
-          else
-            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
-            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
-          fi
 
   build-client:
     runs-on: ubuntu-latest
@@ -51,13 +41,23 @@ jobs:
           else
             docker build ./client/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
           fi
+
+  push-images:
+    needs: [ build-api, build-client ]
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Push the Docker images to the ghcr.io registry
         run: |
           docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GITHUB_TOKEN }}
           if [ "${{ inputs.scope }}" = "BETA" ]; then
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest-beta
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
+            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta
+            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
           else
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
+            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
+            docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
           fi
