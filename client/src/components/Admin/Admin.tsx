@@ -3,6 +3,7 @@ import AdminList from "./AdminList.tsx";
 import { useEffect, useState } from "react";
 import Network from "../Network/Network.ts";
 import DeleteDialog from "./Dialogs/DeleteDialog.tsx";
+import AddDialog from "./Dialogs/AddDialog.tsx";
 
 function Admin() {
   const [utilisateurs, setUtilisateurs] = useState(Array<object>);
@@ -10,7 +11,9 @@ function Admin() {
   const [typePrestations, setTypePrestations] = useState(Array<object>);
   const [clients, setClients] = useState(Array<object>);
   const [openDeleteModal, setDeleteOpenModal] = useState(false);
+  const [openAddModal, setAddOpenModal] = useState(false);
   const [selectedElem, setSelectedElem] = useState<object>();
+  const [addType, setAddType] = useState<string>();
 
   useEffect(() => {
     Network.fetch("/api/admin/utilisateurs", {
@@ -83,6 +86,15 @@ function Admin() {
     setSelectedElem(elem);
   }
 
+  function openAdd(type: string) {
+    setAddType(type);
+    setAddOpenModal(true);
+  }
+
+  function handleAdd(elem: object | undefined) {
+    console.log("Ajout d'un élément", elem);
+  }
+
   function handleDelete(elem: object | undefined) {
     //@ts-expect-error type nécessaire pour la suppression depuis le formulaire dynamique
     switch (elem?.type) {
@@ -151,6 +163,7 @@ function Admin() {
 
   function dismissModal() {
     setDeleteOpenModal(false);
+    setAddOpenModal(false);
   }
 
   return (
@@ -161,6 +174,12 @@ function Admin() {
         onDismiss={dismissModal}
         onConfirm={(elem) => handleDelete(elem)}
       />
+      <AddDialog
+        isOpen={openAddModal}
+        type={addType}
+        onDismiss={dismissModal}
+        onConfirm={(elem) => handleAdd(elem)}
+      />
       <div className={"flex flex-col w-4/6 gap-5"}>
         <h1 className={"text-3xl text-center"}>Administration</h1>
         <div>
@@ -170,6 +189,7 @@ function Admin() {
                 <AdminList
                   content={utilisateurs}
                   onDelete={(elem) => openDelete(elem)}
+                  onAdd={() => openAdd("utilisateur")}
                   columns={[
                     { key: "idUtilisateur", label: "Id utilisateur" },
                     { key: "username", label: "Nom d'utilisateur" },
@@ -184,6 +204,7 @@ function Admin() {
                 <AdminList
                   content={typePrestations}
                   onDelete={(elem) => openDelete(elem)}
+                  onAdd={() => openAdd("typePrestation")}
                   columns={[
                     { key: "idTypePrestation", label: "Id type prestation" },
                     { key: "nomTypePrestation", label: "Nom type prestation" },
@@ -197,6 +218,7 @@ function Admin() {
                 <AdminList
                   content={prestations}
                   onDelete={(elem) => openDelete(elem)}
+                  onAdd={() => openAdd("prestation")}
                   columns={[
                     { key: "idPrestation", label: "Id type prestation" },
                     { key: "idTypePrestation", label: "Nom type prestation" },
@@ -211,6 +233,7 @@ function Admin() {
                 <AdminList
                   content={clients}
                   onDelete={(elem) => openDelete(elem)}
+                  onAdd={() => openAdd("client")}
                   columns={[
                     { key: "idClient", label: "Id client" },
                     { key: "nomEntreprise", label: "Nom entreprise" },
