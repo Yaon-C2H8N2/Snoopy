@@ -25,9 +25,21 @@ jobs:
         run: |
           if [ "${{ inputs.scope }}" = "BETA" ]; then
             docker build ./api/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta
+            mkdir -p cache/docker
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} > cache/docker/snoopy-api-${{ inputs.image_version }}.tar
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta > cache/docker/snoopy-api-latest-beta.tar
           else
             docker build ./api/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
+            mkdir -p cache/docker
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }} > cache/docker/snoopy-api-${{ inputs.image_version }}.tar
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest > cache/docker/snoopy-api-latest.tar
           fi
+      - name: Caching the docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: cache/docker
+          retention-days: 1
 
   build-client:
     runs-on: ubuntu-latest
@@ -38,24 +50,47 @@ jobs:
         run: |
           if [ "${{ inputs.scope }}" = "BETA" ]; then
             docker build ./client/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest-beta
+            mkdir -p cache/docker
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} > cache/docker/snoopy-client-${{ inputs.image_version }}.tar
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest-beta > cache/docker/snoopy-client-latest-beta.tar
           else
             docker build ./client/ --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
+            mkdir -p cache/docker
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }} > cache/docker/snoopy-client-${{ inputs.image_version }}.tar
+            docker save ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest > cache/docker/snoopy-client-latest.tar
           fi
+      - name: Caching the docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: cache/docker
+          retention-days: 1
 
   push-images:
     needs: [ build-api, build-client ]
     runs-on: ubuntu-latest
 
     steps:
+      - name: Retrieve the cached docker images
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-image
+          path: cache/docker
+
       - name: Push the Docker images to the ghcr.io registry
+        working-directory: cache/docker
         run: |
           docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GITHUB_TOKEN }}
           if [ "${{ inputs.scope }}" = "BETA" ]; then
+            docker load -i snoopy-client-${{ inputs.image_version }}.tar
+            docker load -i snoopy-client-latest-beta.tar
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest-beta
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest-beta
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:${{ inputs.image_version }}
           else
+            docker load -i snoopy-client-${{ inputs.image_version }}.tar
+            docker load -i snoopy-client-latest.tar
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:latest
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-client:${{ inputs.image_version }}
             docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/snoopy-api:latest
