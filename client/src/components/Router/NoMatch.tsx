@@ -1,9 +1,9 @@
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const NoMatch = () => {
     return (
         <Link to="/">
-            <span style={{ fontSize: '3rem' }}>404 Page d'accueil</span>
+            <span style={{ fontSize: "3rem" }}>404 Page d'accueil</span>
         </Link>
     );
 };

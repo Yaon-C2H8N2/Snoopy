@@ -1,5 +1,6 @@
 package fr.yaon.api.auth.services;
 
+import fr.yaon.api.auth.models.Utilisateur;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // If the token contains valid informations and the user is not already authenticated
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = repositoryUserDetailsService.loadUserByUsername(username);
+            Utilisateur userDetails = repositoryUserDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwtBody, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -1,15 +1,33 @@
-import {Autocomplete, AutocompleteItem, Button, Checkbox, Input, Select, SelectItem, Textarea} from "@nextui-org/react";
-import {FormEvent, useState} from "react";
-import SignatureCanvas from 'react-signature-canvas';
+import {
+    Autocomplete,
+    AutocompleteItem,
+    Button,
+    Checkbox,
+    Input,
+    Select,
+    SelectItem,
+    Textarea,
+} from "@nextui-org/react";
+import { FormEvent, useState } from "react";
+import SignatureCanvas from "react-signature-canvas";
 
 //definition des props
 type PrestationFormProps = {
-    typePrestations: { nomTypePrestation: string, idTypePrestation: number }[],
-    intervenants: { nom: string, prenom: string, idEmploye: number }[],
-    prestations: { nomPrestation: string, idTypePrestation: number, idPrestation: number }[],
-    clients: { idClient: number, nomEntreprise: string, adresse: string, adresseMail: string }[],
-    onValidate: (prestationIntervention: object) => void,
-}
+    typePrestations: { nomTypePrestation: string; idTypePrestation: number }[];
+    intervenants: { nom: string; prenom: string; idEmploye: number }[];
+    prestations: {
+        nomPrestation: string;
+        idTypePrestation: number;
+        idPrestation: number;
+    }[];
+    clients: {
+        idClient: number;
+        nomEntreprise: string;
+        adresse: string;
+        adresseMail: string;
+    }[];
+    onValidate: (prestationIntervention: object) => void;
+};
 
 function PrestationForm(props: PrestationFormProps) {
     const [selectedIntervenants, setSelectedIntervenants] = useState(Array<{
@@ -24,12 +42,15 @@ function PrestationForm(props: PrestationFormProps) {
 
     const handleAjoutIntervenant = () => {
         if (selectedIntervenantId) {
-            const intervenant = props.intervenants.find((intervenant) => intervenant.idEmploye === selectedIntervenantId);
+            const intervenant = props.intervenants.find(
+                (intervenant) =>
+                    intervenant.idEmploye === selectedIntervenantId,
+            );
             if (intervenant && !selectedIntervenants.includes(intervenant)) {
                 setSelectedIntervenants([...selectedIntervenants, intervenant]);
             }
         }
-    }
+    };
 
     const handleValidate = (event: FormEvent) => {
         event.preventDefault();
@@ -44,17 +65,28 @@ function PrestationForm(props: PrestationFormProps) {
                 interieur: formData.get("interieur") !== null,
                 exterieur: formData.get("exterieur") !== null,
                 commentaire: formData.get("commentaire"),
-                confirmationSignature: !(formData.get("confirmation_signature") === ""),
+                confirmationSignature: !(
+                    formData.get("confirmation_signature") === ""
+                ),
                 //problem with format (it includes the type of the image, ence the split, which isn't needed here as the api only supports base64)
-                signature: !(formData.get("confirmation_signature") === "") ? canvasRef?.toDataURL().split(",", 2)[1] || "" : null,
+                signature: !(formData.get("confirmation_signature") === "")
+                    ? canvasRef?.toDataURL().split(",", 2)[1] || ""
+                    : null,
             },
-            idEmployes: selectedIntervenants.map((intervenant) => intervenant.idEmploye)
+            idEmployes: selectedIntervenants.map(
+                (intervenant) => intervenant.idEmploye,
+            ),
         };
         props.onValidate(prestationIntervention);
-    }
+    };
 
     return (
-        <form onSubmit={handleValidate} className={"flex flex-wrap justify-center shrink-0 space-x-5 space-y-5 mt-40"}>
+        <form
+            onSubmit={handleValidate}
+            className={
+                "flex flex-wrap justify-center shrink-0 space-x-5 space-y-5 mt-40"
+            }
+        >
             <div className={"w-2/6 min-w-96 flex flex-col space-y-5"}>
                 <div className={"flex flex-row items-center"}>
                     <div>Type de prestation</div>
@@ -65,8 +97,10 @@ function PrestationForm(props: PrestationFormProps) {
                         onChange={(event) => setSelectedTypePrestation(Number(event.target.value))}
                     >
                         {props.typePrestations.map((typePrestation) => (
-                            <SelectItem key={typePrestation.idTypePrestation}
-                                        value={typePrestation.idTypePrestation}>
+                            <SelectItem
+                                key={typePrestation.idTypePrestation}
+                                value={typePrestation.idTypePrestation}
+                            >
                                 {typePrestation.nomTypePrestation}
                             </SelectItem>
                         ))}
@@ -75,16 +109,25 @@ function PrestationForm(props: PrestationFormProps) {
                 <div className={"flex flex-col space-y-2.5"}>
                     <h2>Intervenants sur la prestation :</h2>
                     <ol>
-                        {selectedIntervenants.length > 0 ? selectedIntervenants.map((selectedIntervenant) => (
-                            <li key={selectedIntervenant?.idEmploye}>{selectedIntervenant?.prenom + " " + selectedIntervenant?.nom}</li>
-                        )) : <li>Aucun intervenant sélectionné</li>
-                        }
+                        {selectedIntervenants.length > 0 ? (
+                            selectedIntervenants.map((selectedIntervenant) => (
+                                <li key={selectedIntervenant?.idEmploye}>
+                                    {selectedIntervenant?.prenom +
+                                        " " +
+                                        selectedIntervenant?.nom}
+                                </li>
+                            ))
+                        ) : (
+                            <li>Aucun intervenant sélectionné</li>
+                        )}
                     </ol>
                     <div className={"flex flex-row items-center space-x-5"}>
                         <Autocomplete
                             label="Ajouter un intervenant"
                             placeholder="Nom de l'intervenant"
-                            onSelectionChange={(value) => setSelectedIntervenantId(Number(value))}
+                            onSelectionChange={(value) =>
+                                setSelectedIntervenantId(Number(value))
+                            }
                             name={"listIntervenants"}
                         >
                             {props.intervenants.map((intervenant) => {
@@ -92,9 +135,11 @@ function PrestationForm(props: PrestationFormProps) {
                                     <AutocompleteItem
                                         key={intervenant.idEmploye}
                                     >
-                                        {intervenant.prenom + " " + intervenant.nom}
+                                        {intervenant.prenom +
+                                            " " +
+                                            intervenant.nom}
                                     </AutocompleteItem>
-                                )
+                                );
                             })}
                         </Autocomplete>
                         <Button
@@ -141,7 +186,10 @@ function PrestationForm(props: PrestationFormProps) {
                             isRequired={true}
                         >
                             {props.clients.map((client) => (
-                                <SelectItem key={client.idClient} value={client.nomEntreprise}>
+                                <SelectItem
+                                    key={client.idClient}
+                                    value={client.nomEntreprise}
+                                >
                                     {client.nomEntreprise}
                                 </SelectItem>
                             ))}
@@ -153,24 +201,34 @@ function PrestationForm(props: PrestationFormProps) {
                 <div className={"flex flex-row justify-center space-x-5"}>
                     <div className={"flex flex-row w-full"}>
                         <div>Heure de début</div>
-                        <Input type={"time"} name={"heureDebut"} isRequired={true}/>
+                        <Input
+                            type={"time"}
+                            name={"heureDebut"}
+                            isRequired={true}
+                        />
                     </div>
                     <div className={"flex flex-row w-full"}>
                         <div>Heure de fin</div>
-                        <Input type={"time"} name={"heureFin"} isRequired={true}/>
+                        <Input
+                            type={"time"}
+                            name={"heureFin"}
+                            isRequired={true}
+                        />
                     </div>
                 </div>
                 <div className={"flex flex-col justify-center space-y-2.5"}>
                     <h2>Signature du client :</h2>
                     <div>
-                        <Checkbox name={"confirmation_signature"}>Le client n'a pas souhaité signer le bon</Checkbox>
+                        <Checkbox name={"confirmation_signature"}>
+                            Le client n'a pas souhaité signer le bon
+                        </Checkbox>
                     </div>
                     <SignatureCanvas
                         penColor="black"
                         backgroundColor={"transparent"}
-                        canvasProps={{width: 500, height: 100}}
+                        canvasProps={{ width: 500, height: 100 }}
                         ref={(ref) => {
-                            canvasRef = ref
+                            canvasRef = ref;
                         }}
                     />
                 </div>
@@ -184,16 +242,12 @@ function PrestationForm(props: PrestationFormProps) {
                 </div>
             </div>
             <div className={"flex flex-row justify-center w-full"}>
-                <Button
-                    color={"primary"}
-                    variant={"shadow"}
-                    type={"submit"}
-                >
+                <Button color={"primary"} variant={"shadow"} type={"submit"}>
                     Valider
                 </Button>
             </div>
         </form>
-    )
+    );
 }
 
-export default PrestationForm
+export default PrestationForm;

@@ -4,19 +4,17 @@ const AuthProvider = {
         username: string,
         password: string,
         setError: (error: string) => void,
-        callback: VoidFunction
+        callback: VoidFunction,
     ) {
         const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
+        headers.append("Content-Type", "application/json");
 
-        const auth = await fetch('/api/authenticate', {
-            method: 'POST',
-            body: JSON.stringify(
-                {
-                    username: username,
-                    password: password,
-                }
-            ),
+        const auth = await fetch("/api/authenticate", {
+            method: "POST",
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
             headers: headers,
         });
 
@@ -25,8 +23,8 @@ const AuthProvider = {
             callback();
         } else {
             AuthProvider.isAuthenticated = false;
-            setError("Erreur de connexion")
-            console.log("login password incorrect")
+            setError("Erreur de connexion");
+            console.log("login password incorrect");
         }
     },
     SignOut(callback: VoidFunction) {
@@ -36,10 +34,9 @@ const AuthProvider = {
 };
 
 interface User {
-    username: string,
-    role: string
+    username: string;
+    role: string;
 }
 
-export {AuthProvider};
-export type {User};
-
+export { AuthProvider };
+export type { User };
