@@ -30,13 +30,17 @@ type PrestationFormProps = {
 };
 
 function PrestationForm(props: PrestationFormProps) {
-    const [selectedIntervenants, setSelectedIntervenants] = useState(Array<{
-        nom: string,
-        prenom: string,
-        idEmploye: number
-    }>);
-    const [selectedIntervenantId, setSelectedIntervenantId] = useState<number>();
-    const [selectedTypePrestation, setSelectedTypePrestation] = useState<number>();
+    const [selectedIntervenants, setSelectedIntervenants] = useState(
+        Array<{
+            nom: string;
+            prenom: string;
+            idEmploye: number;
+        }>,
+    );
+    const [selectedIntervenantId, setSelectedIntervenantId] =
+        useState<number>();
+    const [selectedTypePrestation, setSelectedTypePrestation] =
+        useState<number>();
 
     let canvasRef: SignatureCanvas | null;
 
@@ -94,7 +98,11 @@ function PrestationForm(props: PrestationFormProps) {
                         id={"typePrestation"}
                         label="Sélectionnez un type de prestation"
                         name={"typePrestation"}
-                        onChange={(event) => setSelectedTypePrestation(Number(event.target.value))}
+                        onChange={(event) =>
+                            setSelectedTypePrestation(
+                                Number(event.target.value),
+                            )
+                        }
                     >
                         {props.typePrestations.map((typePrestation) => (
                             <SelectItem
@@ -162,12 +170,19 @@ function PrestationForm(props: PrestationFormProps) {
                             isRequired={true}
                         >
                             {props.prestations
-                                .filter((prestation) => (prestation.idTypePrestation === selectedTypePrestation))
+                                .filter(
+                                    (prestation) =>
+                                        prestation.idTypePrestation ===
+                                        selectedTypePrestation,
+                                )
                                 .map((prestation) => (
-                                <SelectItem key={prestation.idPrestation} value={prestation.idPrestation}>
-                                    {prestation.nomPrestation}
-                                </SelectItem>
-                            ))}
+                                    <SelectItem
+                                        key={prestation.idPrestation}
+                                        value={prestation.idPrestation}
+                                    >
+                                        {prestation.nomPrestation}
+                                    </SelectItem>
+                                ))}
                         </Select>
                     </div>
                     <div className={"flex flex-row items-center space-x-5"}>
